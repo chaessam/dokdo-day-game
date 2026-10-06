@@ -23,3 +23,4 @@
 | `assets/photos/s-arch.jpg` | 파도가 깎아 만든 독도의 바위 문과 바위 기둥 | Korea.net(해외문화홍보원) · CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Koreanet_Honorary_Reporters_Dokdo_02_(29935054925).jpg |
 | `assets/photos/s-house.jpg` | 동도 꼭대기에서 내려다본 서도. 아래쪽 바닷가에 주민 숙소가 있어요. | Ulleungdont · CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Dokdo-West-Isle.JPG |
 | `assets/photos/s-gull.jpg` | 서도 꼭대기에 둥지를 튼 괭이갈매기들. 뒤로 동도가 보여요. | Ulleungdont · CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Dokdo-East-Isle.JPG |
+| `assets/photos/s-seal.jpg` | 1930년대 독도에서 강치를 산 채로 잡던 일본 어민들 | 작자 미상 · 퍼블릭 도메인 | https://commons.wikimedia.org/wiki/File:Live_catching_of_Sealion_in_Takeshima,_by_Japanese_fishermans.jpg |
