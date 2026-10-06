@@ -15,6 +15,7 @@
 | `assets/photos/r-sejong.jpg` | 배 위에서 바라본 독도. 날씨가 맑으면 멀리서도 또렷하게 보여요. | Korea.net(해외문화홍보원) · CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:KOCIS_Dokdo_Islands_(4925397717).jpg |
 | `assets/photos/r-gull.jpg` | 괭이갈매기. 노란 부리 끝의 빨간 점과 꽁지의 검은 띠가 특징이에요. | kirinzi · CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Larus_crassirostris_411338457.jpg |
 | `assets/photos/r-anyongbok.jpg` | 부산 수영사적공원에 있는 안용복 장군 사당 | Seudo · CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Shrine_for_General_An_Yong-bok_(Busan)_-_the_main_shrine.jpg |
+| `assets/photos/r-plants.jpg` | 바닷가 바위틈에 피는 해국 | 국립생태원 · 공공누리 제1유형 | https://commons.wikimedia.org/wiki/File:Aster_spathulifolius.jpg |
 | `assets/photos/r-decree.jpg` | 대한제국 칙령 제41호 (1900년) | 대한제국 정부 · 퍼블릭 도메인 | https://commons.wikimedia.org/wiki/File:Royal_Decree_No.41.jpg |
 | `assets/photos/r-sealion.jpg` | 1934년 6월, 독도 바위 위에서 쉬고 있는 강치 | 작자 미상 · 퍼블릭 도메인 | https://commons.wikimedia.org/wiki/File:Sea_lion_in_Takeshima,_Japan_(June_1934).jpg |
 | `assets/photos/s-guard.jpg` | 동도 위의 경비 시설과 통신탑 | Ulleungdont · CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Dokdo-Facilities.jpg |
