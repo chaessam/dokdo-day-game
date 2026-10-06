@@ -221,7 +221,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .facts dt { font-size: 12.5px; color: var(--hanji-dim); }
 .facts dd { margin: 2px 0 0; font-weight: 700; font-size: 16px; }
 .photo { margin: 0; border-radius: 6px; overflow: hidden; background: #d9cdb2; box-shadow: 0 0 0 1px rgba(42, 32, 24, .2); }
-.photo img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.photo img { display: block; width: 100%; aspect-ratio: 2 / 1; max-height: 30vh; object-fit: cover; }
 .photo figcaption { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13px; padding: 7px 10px; color: var(--hanji-dim); }
 .photo figcaption span { font-size: 12px; }
 .quiz { border-top: 1px dashed rgba(42, 32, 24, .3); padding-top: 16px; display: flex; flex-direction: column; gap: 12px; }
@@ -314,6 +314,19 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .v-acts { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
 .photo.dark { background: #0d1626; box-shadow: 0 0 0 1px var(--line); }
 .photo.dark figcaption { color: var(--dim); }
+.credit-link { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--dim); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.credit-link:hover { color: var(--text); }
+.credit-link.dark { color: var(--hanji-dim); font-size: 13px; }
+.credits { position: relative; width: 100%; max-width: 760px; margin: auto; background: rgba(7, 15, 28, .95); border: 1px solid var(--line); border-radius: 22px; padding: clamp(20px, 3vw, 32px); display: flex; flex-direction: column; gap: 10px; }
+.credits .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; }
+.credits h2 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: 30px; }
+.credits h3 { margin: 12px 0 0; font-size: 15px; color: var(--gold); font-weight: 700; }
+.cr-lead { margin: 0; color: var(--dim); line-height: 1.7; font-size: 15px; }
+.credits ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.credits li { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; min-width: 0; }
+.credits li b { font-weight: 500; }
+.credits li span { color: var(--dim); font-size: 13px; }
+.credits li a { color: var(--teal); font-size: 13px; overflow-wrap: anywhere; }
 /* 임명장 */
 .cert {
   width: 100%; max-width: 720px; margin: auto; color: var(--hanji-ink); padding: clamp(24px, 5vw, 52px); position: relative;
@@ -378,6 +391,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
       </button>
       <button class="btn ghost" id="skipBtn" type="button">바로 독도 탐사하기</button>
     </div>
+    <button class="credit-link" id="creditBtn" type="button">사진·영상 출처 보기</button>
     <div class="t-meta">
       <span><b>01</b>울릉도 → 독도 항해</span>
       <span><b>02</b>유리병 기록 12개</span>
@@ -453,6 +467,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   <svg id="sndOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
 </button>
 <div class="toast" id="toast"></div>
+<div id="credits" class="modal" hidden></div>
 <div class="fade on" id="fade"></div>
 
 <script type="module">
@@ -573,9 +588,26 @@ const SPOTS = [
     did: "1900년대 초 일본 어부들이 강치를 마구 잡아들여서, 지금 독도에서는 강치를 볼 수 없어요." },
 ];
 
+/* 실제 사진: 위키미디어 공용의 자유 이용 사진과 공공누리 제1유형 사진. 출처는 카드와 출처 화면에 함께 표시한다. */
+const PHOTOS = {
+  "r-islands": { src: "assets/photos/r-islands.jpg", alt: "아리랑 2호 위성에서 내려다본 독도. 동도와 서도 둘레로 작은 바위섬들이 흩어져 있어요.", credit: "한국항공우주연구원 · 공공누리 제1유형", link: "https://commons.wikimedia.org/wiki/File:%EB%8F%85%EB%8F%84(%EC%95%84%EB%A6%AC%EB%9E%91_2%ED%98%B8)_(482).jpeg" },
+  "r-volcano": { src: "assets/photos/r-volcano.jpg", alt: "파도에 깎여 기둥과 문 모양이 된 독도의 화산암 바위들", credit: "Korea.net(해외문화홍보원) · CC BY-SA 2.0", link: "https://commons.wikimedia.org/wiki/File:Koreanet_Honorary_Reporters_Dokdo_03_(29307778904).jpg" },
+  "r-sejong": { src: "assets/photos/r-sejong.jpg", alt: "배 위에서 바라본 독도. 날씨가 맑으면 멀리서도 또렷하게 보여요.", credit: "Korea.net(해외문화홍보원) · CC BY-SA 2.0", link: "https://commons.wikimedia.org/wiki/File:KOCIS_Dokdo_Islands_(4925397717).jpg" },
+  "r-gull": { src: "assets/photos/r-gull.jpg", alt: "괭이갈매기. 노란 부리 끝의 빨간 점과 꽁지의 검은 띠가 특징이에요.", credit: "kirinzi · CC BY 4.0", link: "https://commons.wikimedia.org/wiki/File:Larus_crassirostris_411338457.jpg" },
+  "r-anyongbok": { src: "assets/photos/r-anyongbok.jpg", alt: "부산 수영사적공원에 있는 안용복 장군 사당", credit: "Seudo · CC BY-SA 4.0", link: "https://commons.wikimedia.org/wiki/File:Shrine_for_General_An_Yong-bok_(Busan)_-_the_main_shrine.jpg" },
+  "r-decree": { src: "assets/photos/r-decree.jpg", alt: "대한제국 칙령 제41호 (1900년)", credit: "대한제국 정부 · 퍼블릭 도메인", link: "https://commons.wikimedia.org/wiki/File:Royal_Decree_No.41.jpg" },
+  "r-sealion": { src: "assets/photos/r-sealion.jpg", alt: "1934년 6월, 독도 바위 위에서 쉬고 있는 강치", credit: "작자 미상 · 퍼블릭 도메인", link: "https://commons.wikimedia.org/wiki/File:Sea_lion_in_Takeshima,_Japan_(June_1934).jpg" },
+  "s-guard": { src: "assets/photos/s-guard.jpg", alt: "동도 위의 경비 시설과 통신탑", credit: "Ulleungdont · CC BY-SA 3.0", link: "https://commons.wikimedia.org/wiki/File:Dokdo-Facilities.jpg" },
+  "s-light": { src: "assets/photos/s-light.jpg", alt: "동도 꼭대기에 서 있는 독도 등대", credit: "Ulleungdont · CC BY-SA 3.0", link: "https://commons.wikimedia.org/wiki/File:Dokdo-Watchtower-2.JPG" },
+  "s-arch": { src: "assets/photos/s-arch.jpg", alt: "파도가 깎아 만든 독도의 바위 문과 바위 기둥", credit: "Korea.net(해외문화홍보원) · CC BY-SA 2.0", link: "https://commons.wikimedia.org/wiki/File:Koreanet_Honorary_Reporters_Dokdo_02_(29935054925).jpg" },
+  "s-house": { src: "assets/photos/s-house.jpg", alt: "동도 꼭대기에서 내려다본 서도. 아래쪽 바닷가에 주민 숙소가 있어요.", credit: "Ulleungdont · CC BY-SA 3.0", link: "https://commons.wikimedia.org/wiki/File:Dokdo-West-Isle.JPG" },
+  "s-gull": { src: "assets/photos/s-gull.jpg", alt: "서도 꼭대기에 둥지를 튼 괭이갈매기들. 뒤로 동도가 보여요.", credit: "Ulleungdont · CC BY-SA 3.0", link: "https://commons.wikimedia.org/wiki/File:Dokdo-East-Isle.JPG" },
+};
+["r-islands", null, "r-volcano", "r-sejong", "r-gull", "r-anyongbok", "r-sea", null, "r-plants", "r-decree", "r-sealion", null].forEach((k, i) => { if (k) RECORDS[i].photo = PHOTOS[k]; });
+SPOTS.forEach((s) => { if (PHOTOS["s-" + s.id]) s.photo = PHOTOS["s-" + s.id]; });
+
 /* 마지막 관문 영상. 채널 이름은 영상 페이지에서 확인해 채워 넣는다. */
-const VIDEO = { id: "VWYuFtVKBww", title: "독도 영상", channel: "" };
-/* 실제 사진 목록: 저작권이 확인된 사진만 assets/photos/ 에 넣고 credit(촬영자·라이선스)을 함께 적는다. */
+const VIDEO = { id: "VWYuFtVKBww", title: "우리 땅 독도 홍보영상, 10월 25일 독도의 날", channel: "전북미래교육연구원" };
 
 
 /* ---------- 소리 (Web Audio로 직접 합성) ---------- */
@@ -872,7 +904,7 @@ const rArr = []; for (const o of [W, E, ULL]) for (let k = 0; k < 64; k += 4) rA
 const water = new THREE.Mesh(
   polarGrid(162, 140),
   new THREE.ShaderMaterial({
-    uniforms: { ...U, uIsl: { value: [new THREE.Vector2(W.cx, W.cz), new THREE.Vector2(E.cx, E.cz), new THREE.Vector2(ULL.cx, ULL.cz)] }, uR: { value: rArr } },
+    uniforms: { ...U, uIsl: { value: [new THREE.Vector2(W.cx, W.cz), new THREE.Vector2(E.cx, E.cz), new THREE.Vector2(ULL.cx, ULL.cz)] }, uR: { value: rArr }, uBoatInv: { value: new THREE.Matrix4() }, uBoatOn: { value: 0 } },
     vertexShader: /* glsl */`
       uniform float uTime;
       varying vec3 vWorld; varying vec3 vN;
@@ -898,6 +930,8 @@ const water = new THREE.Mesh(
     fragmentShader: SKY_GLSL + /* glsl */`
       uniform vec2 uIsl[3];
       uniform vec4 uR[48];
+      uniform mat4 uBoatInv;
+      uniform float uBoatOn;
       varying vec3 vWorld; varying vec3 vN;
       float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       float vn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -909,6 +943,15 @@ const water = new THREE.Mesh(
         return mix(uR[a / 4][a % 4], uR[b / 4][b % 4], fr);
       }
       void main(){
+        // 배가 떠 있는 자리에는 바닷물을 그리지 않는다 (선체 안으로 물이 비치지 않게)
+        if (uBoatOn > 0.5) {
+          vec3 lp = (uBoatInv * vec4(vWorld, 1.0)).xyz;
+          if (lp.z < 6.0 && lp.z > -7.0 && lp.y < 3.0) {
+            float u = clamp((6.0 - lp.z) / 13.0, 0.0, 1.0);
+            float hb = 2.15 * (u < 0.42 ? mix(0.84, 1.0, smoothstep(0.0, 0.42, u)) : pow(max(0.0, 1.0 - pow((u - 0.42) / 0.58, 2.2)), 0.5));
+            if (abs(lp.x) < hb * 0.88) discard;
+          }
+        }
         vec3 toC = cameraPosition - vWorld; float dist = length(toC); vec3 V = toC / dist;
         vec2 uv = vWorld.xz;
         float near = 1.0 - smoothstep(40.0, 700.0, dist);
@@ -993,7 +1036,7 @@ const boxG = (w, h, d) => { const g = new THREE.BoxGeometry(w, h, d); g.translat
   add(new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.8, 10, 10).translate(0, 5, 0), mat("#f4f3ee")), lp.x + 1.5, lp.y + 3, lp.z);
   add(new THREE.Mesh(new THREE.CylinderGeometry(2.1, 2.1, 0.5, 12).translate(0, 0.25, 0), mat("#3d4248")), lp.x + 1.5, lp.y + 13, lp.z);
   const lantern = add(new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 1.8, 12).translate(0, 0.9, 0), new THREE.MeshStandardMaterial({ color: "#fff3c4", emissive: "#ffd36b", emissiveIntensity: 1.2 })), lp.x + 1.5, lp.y + 13.5, lp.z);
-  add(new THREE.Mesh(new THREE.ConeGeometry(1.7, 1.6, 12).translate(0, 0.8, 0), mat("#c23b30")), lp.x + 1.5, lp.y + 15.3, lp.z);
+  add(new THREE.Mesh(new THREE.SphereGeometry(1.55, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), mat("#f4f3ee", { flatShading: false })), lp.x + 1.5, lp.y + 15.3, lp.z);
   FAC.lamp = new THREE.Vector3(lp.x + 1.5, lp.y + 14.4, lp.z);
   FAC.lantern = lantern;
   FAC.light = new THREE.Vector3(lp.x + 1.5, lp.y + 19, lp.z);
@@ -1516,7 +1559,7 @@ function placeBoat(dt) {
   const hb = waveY(b.x + fx * 6, b.z + fz * 6, t), hs = waveY(b.x - fx * 5.5, b.z - fz * 5.5, t);
   const hl = waveY(b.x + fz * 1.8, b.z - fx * 1.8, t), hr = waveY(b.x - fz * 1.8, b.z + fx * 1.8, t);
   b.y = (hb + hs + hl + hr) / 4;
-  boat.position.set(b.x, b.y + 0.05, b.z);
+  boat.position.set(b.x, b.y + 0.22, b.z);
   boat.rotation.set(Math.atan2(hb - hs, 9) + b.speed * 0.0025, b.psi, Math.atan2(hl - hr, 3.6) * 0.8 + b.lean, "YXZ");
   const rx = -fz, rz = fx; // 오른쪽 방향
   const n = Math.floor(b.speed * dt * 9 + Math.random());
@@ -1615,7 +1658,7 @@ function collect(bt) {
 }
 function photoHTML(ph, dark) {
   if (!ph) return "";
-  return `<figure class="photo${dark ? " dark" : ""}"><img src="${ph.src}" alt="${ph.alt}" loading="lazy"><figcaption>${ph.alt}<span>사진: ${ph.credit}</span></figcaption></figure>`;
+  return `<figure class="photo${dark ? " dark" : ""}"><img src="${ph.src}" alt="${ph.alt}" onerror="this.closest('figure').remove()"><figcaption>${ph.alt}<span>사진: ${ph.credit}</span></figcaption></figure>`;
 }
 function openRecord(i) {
   const r = RECORDS[i], nat = r.kind === "nature";
@@ -1649,10 +1692,10 @@ function openRecord(i) {
     if (right) { S.stars++; Snd.good(); $("#why").innerHTML = "정답이에요! " + r.quiz.why; }
     else { btn.classList.add("wrong"); Snd.bad(); $("#why").innerHTML = "아쉬워요. 정답은 <b>" + r.quiz.a[r.quiz.c] + "</b>. " + r.quiz.why; }
     updateHudStatic();
-    const nx = $("#docNext"); nx.hidden = false; nx.focus();
+    const nx = $("#docNext"); nx.hidden = false; nx.focus({ preventScroll: true }); nx.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }));
   $("#docNext").addEventListener("click", () => { ui.record.hidden = true; S.state = "voyage"; renderer.domElement.focus?.(); });
-  ui.record.querySelector(".opt").focus();
+  ui.record.querySelector(".opt").focus({ preventScroll: true });
 }
 
 /* ---------- 흐름 ---------- */
@@ -1836,6 +1879,24 @@ function openVideo() {
   $("#vidDone").addEventListener("click", () => { Snd.music = true; openFinale(); });
   $("#vidBack").addEventListener("click", () => { Snd.music = true; ui.finale.hidden = true; S.state = "explore"; show(ui.explore, true); resetView(); });
 }
+function openCredits() {
+  const el = $("#credits");
+  const url = `https://www.youtube.com/watch?v=${VIDEO.id}`;
+  el.innerHTML = `
+    <article class="credits" role="dialog" aria-modal="true" aria-labelledby="crTitle">
+      <button class="icon-btn close" id="crClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="kicker">출처</div>
+      <h2 id="crTitle">사진·영상 출처</h2>
+      <p class="cr-lead">이 게임의 실제 사진은 위키미디어 공용에서 자유 이용이 허락된 사진(CC 라이선스, 퍼블릭 도메인)과 공공누리 제1유형 사진이에요. 3D 장면은 직접 만든 그림이에요.</p>
+      <h3>영상</h3>
+      <ul><li><b>${VIDEO.title}</b><span>${VIDEO.channel} · YouTube</span><a href="${url}" target="_blank" rel="noopener">${url}</a></li></ul>
+      <h3>사진</h3>
+      <ul>${Object.values(PHOTOS).map((p) => `<li><b>${p.alt}</b><span>${p.credit}</span><a href="${p.link}" target="_blank" rel="noopener">위키미디어 공용 원본 보기</a></li>`).join("")}</ul>
+    </article>`;
+  el.hidden = false;
+  $("#crClose").addEventListener("click", () => (el.hidden = true));
+  el.addEventListener("click", (e) => { if (e.target === el) el.hidden = true; }, { once: true });
+}
 function openFinale() {
   closeSpot(); S.state = "finale";
   ui.explore.classList.add("out");
@@ -1851,12 +1912,13 @@ function openFinale() {
       <div class="stats"><span><b>${S.collected} / ${NREC}</b>유리병 기록</span><span><b>${S.stars} / ${NREC}</b>퀴즈 정답</span><span><b>${S.spots.size} / ${SPOTS.length}</b>독도 도감</span></div>
       <div class="sign"><span>${date}</span><span>독도 원정대</span><span class="seal" aria-hidden="true">독도<br>지킴</span></div>
       <div class="acts"><button class="btn ghost" id="backExplore" type="button">독도 더 둘러보기</button><button class="btn" id="again" type="button">처음부터 다시</button></div>
-      <div class="tip">이름을 쓰고 화면을 캡처하면 임명장을 간직할 수 있어요.</div>
+      <div class="tip">이름을 쓰고 화면을 캡처하면 임명장을 간직할 수 있어요. · <button class="credit-link dark" id="creditBtn2" type="button">사진·영상 출처</button></div>
     </article>`;
   ui.finale.hidden = false;
   $("#certName").focus();
   $("#backExplore").addEventListener("click", () => { ui.finale.hidden = true; S.state = "explore"; show(ui.explore, true); resetView(); });
   $("#again").addEventListener("click", () => location.reload());
+  $("#creditBtn2").addEventListener("click", openCredits);
 }
 
 /* ---------- 입력 ---------- */
@@ -1901,6 +1963,7 @@ cv.addEventListener("pointerup", endPtr); cv.addEventListener("pointercancel", e
 cv.addEventListener("wheel", (e) => { if (S.state !== "explore") return; e.preventDefault(); orbit.tween = null; orbit.r = clamp(orbit.r * (1 + e.deltaY * 0.0012), 45, 420); orbit.idle = 0; }, { passive: false });
 
 $("#startBtn").addEventListener("click", startVoyage);
+$("#creditBtn").addEventListener("click", openCredits);
 $("#skipBtn").addEventListener("click", skipToExplore);
 $("#sheetClose").addEventListener("click", closeSpot);
 $("#resetView").addEventListener("click", resetView);
@@ -1980,6 +2043,9 @@ function frame(now) {
 
   // 공통 애니메이션
   water.position.set(Math.round(camera.position.x / 6) * 6, 0, Math.round(camera.position.z / 6) * 6);
+  boat.updateMatrixWorld();
+  water.material.uniforms.uBoatInv.value.copy(boat.matrixWorld).invert();
+  water.material.uniforms.uBoatOn.value = boat.visible ? 1 : 0;
   sky.position.copy(camera.position);
   sunLight.position.copy(camera.position).addScaledVector(U.uSunDir.value, 600); sunLight.target.position.copy(camera.position);
   const nightAmt = smooth(0.06, -0.08, sunE);

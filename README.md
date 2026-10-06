@@ -20,7 +20,8 @@ npx serve .   # 또는 python3 -m http.server
 
 GitHub Pages에서 저장소 루트를 배포하면 바로 열 수 있습니다.
 
-## 사진·영상 넣기
+## 사진·영상
 
-- 영상: `index.html`의 `VIDEO` 설정에 영상 ID와 채널 이름을 적습니다.
-- 사진: 저작권이 확인된 사진을 `assets/photos/`에 넣고, 해당 기록(`RECORDS`)이나 탐사 장소(`SPOTS`)에 `photo: { src, alt, credit }`를 적으면 카드에 출처와 함께 표시됩니다.
+- 기록 카드와 탐사 설명에 실제 사진이 함께 나옵니다. 사진은 `assets/photos/`에 있고, 출처와 라이선스는 [CREDITS.md](CREDITS.md)와 게임 안 '사진·영상 출처' 화면에 있습니다.
+- 마지막 관문 영상은 `index.html`의 `VIDEO` 설정(영상 ID, 제목, 채널)으로 바꿀 수 있습니다.
+- 사진을 더 넣으려면 `PHOTOS` 목록에 `{ src, alt, credit, link }`를 추가합니다. 저작권이 확인된 사진만 넣어 주세요.
