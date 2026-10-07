@@ -161,17 +161,11 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 6;
   display: flex; gap: 18px; align-items: center; flex-wrap: wrap; justify-content: center;
   background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 10px 20px; font-size: 14px; color: var(--dim);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: opacity .6s; max-width: calc(100% - 32px);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: opacity .6s; max-width: calc(100% - 32px); pointer-events: none;
 }
 .hint kbd { font-family: var(--f-num); font-size: 12px; color: var(--text); border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 6px; padding: 2px 7px; margin-right: 4px; }
 .hint .beam-ic { display: inline-block; width: 8px; height: 16px; border-radius: 4px; background: linear-gradient(var(--gold), transparent); vertical-align: -3px; margin-right: 6px; }
 .hint.out { opacity: 0; }
-#touch { position: fixed; left: 0; right: 0; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 7; display: flex; justify-content: space-between; align-items: flex-end; padding-inline: 16px; pointer-events: none; }
-#touch > div { display: flex; gap: 12px; pointer-events: auto; }
-.tbtn { width: 74px; height: 74px; border-radius: 50%; border: 0; background: rgba(7, 16, 30, .6); box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--text); display: grid; place-items: center; touch-action: none; user-select: none; -webkit-user-select: none; }
-.tbtn svg { width: 30px; height: 30px; }
-.tbtn.held { background: rgba(255, 197, 110, .3); box-shadow: inset 0 0 0 2px var(--gold); }
-.tbtn.boost { width: 84px; height: 84px; font-size: 14px; font-weight: 700; }
 
 /* 화면 위 표식 */
 #markers { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
@@ -182,6 +176,15 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .mk.dok .lbl { font-family: var(--f-display); font-weight: 800; font-size: 15px; border-color: rgba(255, 197, 110, .5); }
 .mk.bot .dia { width: 12px; height: 12px; transform: rotate(45deg); border: 2px solid var(--gold); background: rgba(255, 197, 110, .25); }
 
+/* 조이스틱 */
+.hint .t { display: none; }
+@media (pointer: coarse) { .hint .k { display: none; } .hint .t { display: inline; } .hint { bottom: calc(190px + env(safe-area-inset-bottom, 0px)); } }
+#joy { position: fixed; left: 24px; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); width: 128px; z-index: 7; pointer-events: auto; touch-action: none; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: .55; transition: opacity .25s; }
+#joy.on { opacity: 1; bottom: auto; transition: none; }
+#joy.on .joy-label { visibility: hidden; }
+.joy-base { width: 128px; height: 128px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, .06), rgba(255, 255, 255, .14)); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45), 0 6px 24px rgba(0, 0, 0, .25); display: grid; place-items: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.joy-knob { width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff1d6, var(--gold) 60%, var(--gold-deep)); box-shadow: 0 6px 16px rgba(0, 0, 0, .35); will-change: transform; }
+.joy-label { font-size: 13px; color: var(--text); background: rgba(7, 16, 30, .6); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
 /* 잠수 */
 .dive-btn { padding: 11px 18px; font-size: 15px; background: #2aa6b8; color: #04222a; box-shadow: 0 10px 30px -10px rgba(42, 166, 184, .7), inset 0 -3px 0 rgba(0, 0, 0, .15); }
 .dive-btn svg { width: 20px; height: 20px; }
@@ -196,9 +199,6 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .sea-icons i.on { border-style: solid; background: rgba(132, 225, 214, .2); color: var(--teal); }
 .dv-up { margin-right: 58px; padding: 11px 18px; font-size: 15px; white-space: nowrap; }
 .dv-up.glow { background: var(--gold); color: #2b1a05; box-shadow: 0 0 0 0 rgba(255, 197, 110, .6); animation: beacon 1.6s ease-out infinite; }
-#diveTouch { position: fixed; left: 0; right: 0; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 7; display: flex; justify-content: space-between; align-items: flex-end; padding-inline: 16px; pointer-events: none; }
-#diveTouch > div { display: flex; gap: 12px; pointer-events: auto; }
-#diveTouch .vstack { flex-direction: column; }
 .mk.sea .dia { border-color: var(--teal); background: rgba(132, 225, 214, .25); }
 .mk.sea .lbl b { color: var(--teal); }
 .doc.sea .seal { background: #1f6f9e; }
@@ -459,17 +459,12 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   </div>
 </div>
 <div class="hint out" id="hint" hidden>
-  <span><kbd>←</kbd><kbd>→</kbd>방향</span>
-  <span><kbd>Space</kbd>가속</span>
+  <span class="k"><kbd>←</kbd><kbd>→</kbd>방향</span>
+  <span class="k"><kbd>Space</kbd>가속</span>
+  <span class="t">화면을 끌어서 좌우로 조종 · 위로 끌면 가속</span>
   <span><i class="beam-ic"></i>빛기둥 아래 유리병을 건져요</span>
 </div>
-<div id="touch" hidden>
-  <div>
-    <button class="tbtn" id="tLeft" type="button" aria-label="왼쪽으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <button class="tbtn" id="tRight" type="button" aria-label="오른쪽으로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>
-  </div>
-  <div><button class="tbtn boost" id="tBoost" type="button">가속</button></div>
-</div>
+<div id="joy" hidden aria-hidden="true"><div class="joy-base"><div class="joy-knob"></div></div><div class="joy-label">끌어서 조종</div></div>
 
 <div class="wave-alert" id="waveAlert" hidden><div class="wa-text"></div><div class="wa-bar"><i></i></div></div>
 <div id="diveHud" class="layer out" hidden>
@@ -482,19 +477,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   <button class="btn ghost dv-up" id="surfaceBtn" type="button">물 위로 올라가기</button>
 </div>
 <div class="hint out" id="diveHint" hidden>
-  <span><kbd>←</kbd><kbd>→</kbd>좌우</span>
-  <span><kbd>↑</kbd><kbd>↓</kbd>위아래</span>
+  <span class="k"><kbd>←</kbd><kbd>→</kbd>좌우</span>
+  <span class="k"><kbd>↑</kbd><kbd>↓</kbd>위아래</span>
+  <span class="t">화면을 끌어서 위아래 좌우로 헤엄쳐요</span>
   <span>반짝이는 곳을 찾아 헤엄쳐요</span>
-</div>
-<div id="diveTouch" hidden>
-  <div>
-    <button class="tbtn" id="dLeft" type="button" aria-label="왼쪽"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <button class="tbtn" id="dRight" type="button" aria-label="오른쪽"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>
-  </div>
-  <div class="vstack">
-    <button class="tbtn" id="dUp" type="button" aria-label="위로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 15l7-7 7 7"/></svg></button>
-    <button class="tbtn" id="dDown" type="button" aria-label="아래로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 9l7 7 7-7"/></svg></button>
-  </div>
 </div>
 <div id="record" class="modal" hidden></div>
 
@@ -1646,7 +1632,7 @@ let touchSteer = 0, touchBoost = false;
 
 /* ---------- 화면 요소 ---------- */
 const ui = {
-  title: $("#title"), hud: $("#hud"), hint: $("#hint"), touch: $("#touch"), record: $("#record"), explore: $("#explore"),
+  title: $("#title"), hud: $("#hud"), hint: $("#hint"), record: $("#record"), explore: $("#explore"),
   finale: $("#finale"), caption: $("#caption"), markers: $("#markers"), fade: $("#fade"), letterbox: $("#letterbox"), toast: $("#toast"),
 };
 let toastTimer;
@@ -1714,13 +1700,13 @@ function placeBoat(dt) {
 }
 function updateVoyage(dt, control) {
   const b = S.boat;
-  let steer = control ? clamp((keys.left ? 1 : 0) - (keys.right ? 1 : 0) + touchSteer, -1, 1) : 0;
+  let steer = control ? clamp((keys.left ? 1 : 0) - (keys.right ? 1 : 0) + touchSteer - JOY.x, -1, 1) : 0;
   b.psi += steer * 0.95 * dt;
   if (Math.abs(steer) < 0.1) b.psi = damp(b.psi, 0, 0.55, dt);
   if (b.x > 140) b.psi = damp(b.psi, 0.35, 2, dt);
   if (b.x < -140) b.psi = damp(b.psi, -0.35, 2, dt);
   b.psi = clamp(b.psi, -0.65, 0.65);
-  const boosting = control && (keys.boost || touchBoost);
+  const boosting = control && (keys.boost || touchBoost || JOY.y < -0.55);
   const stormy = STORM.level > 0.3;
   b.speed = damp(b.speed, control ? (boosting && !stormy ? 42 : stormy ? 20 : 27) : 0, control ? 1.1 : 2.2, dt);
   b.x += -Math.sin(b.psi) * b.speed * dt; b.z += -Math.cos(b.psi) * b.speed * dt;
@@ -1730,7 +1716,8 @@ function updateVoyage(dt, control) {
   // 카메라 추적
   const fx = -Math.sin(b.psi), fz = -Math.cos(b.psi);
   const rxC = -fz, rzC = fx;
-  const cx = b.x - fx * 17 + rxC * 4.2, cz = b.z - fz * 17 + rzC * 4.2, cy = b.y + 5.9 + (reduceMotion ? 0 : Math.sin(S.time * 0.8) * 0.25);
+  const back = 17 * portraitK(0.45), side = 4.2 / portraitK(1);
+  const cx = b.x - fx * back + rxC * side, cz = b.z - fz * back + rzC * side, cy = b.y + 5.9 * portraitK(0.3) + (reduceMotion ? 0 : Math.sin(S.time * 0.8) * 0.25);
   camera.position.set(damp(camera.position.x, cx, 3.2, dt), damp(camera.position.y, cy, 3.2, dt), damp(camera.position.z, cz, 3.2, dt));
   camLook.set(damp(camLook.x, b.x + fx * 30, 4, dt), damp(camLook.y, 2.8, 4, dt), damp(camLook.z, b.z + fz * 30, 4, dt));
   camera.lookAt(camLook);
@@ -1777,7 +1764,7 @@ function updateMarkers() {
   const pd = project(_v.set(DOK.x, 120, DOK.z));
   const showDok = voy && pd.ok;
   mkDok.style.opacity = showDok ? 1 : 0;
-  if (showDok) { mkDok.style.transform = `translate(${pd.x}px, ${pd.y}px) translate(-50%, -100%)`; mkDok.querySelector("b").textContent = kmLeft(S.boat.z).toFixed(1) + "km"; }
+  if (showDok) { mkDok.style.transform = `translate(${clamp(pd.x, 70, innerWidth - 70)}px, ${pd.y}px) translate(-50%, -100%)`; mkDok.querySelector("b").textContent = kmLeft(S.boat.z).toFixed(1) + "km"; }
   let next = null, nd = Infinity;
   for (const bt of bottles) { if (bt.done) continue; const d = Math.hypot(bt.x - S.boat.x, bt.z - S.boat.z); if (bt.z < S.boat.z + 10 && d < nd) { nd = d; next = bt; } }
   for (const bt of bottles) {
@@ -1787,7 +1774,7 @@ function updateMarkers() {
     const p = project(_v.set(bt.x, 6, bt.z));
     if (!p.ok) { bt.el.style.opacity = 0; continue; }
     bt.el.style.opacity = 1;
-    bt.el.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -100%)`;
+    bt.el.style.transform = `translate(${clamp(p.x, 70, innerWidth - 70)}px, ${p.y}px) translate(-50%, -100%)`;
     bt.el.querySelector("b").textContent = (d * unitsToKm).toFixed(1) + "km";
   }
 }
@@ -1977,11 +1964,10 @@ function beginControl() {
   ui.hud.hidden = false; show(ui.hud, true);
   ui.hint.hidden = false; requestAnimationFrame(() => ui.hint.classList.remove("out"));
   setTimeout(() => ui.hint.classList.add("out"), 9000);
-  if (coarse) ui.touch.hidden = false;
 }
 function startArrival() {
   S.state = "arrival"; S.t = 0;
-  ui.hud.classList.add("out"); ui.hint.classList.add("out"); ui.touch.hidden = true;
+  ui.hud.classList.add("out"); ui.hint.classList.add("out"); joyRelease();
   ui.letterbox.classList.add("on");
   const off = camera.position.clone().sub(EXP.target);
   orbit.target.copy(camLook);
@@ -2411,7 +2397,7 @@ const ghost = new THREE.Group();
 }
 
 /* 잠수 화면 요소 */
-const diveHud = $("#diveHud"), diveTouch = $("#diveTouch"), diveHint = $("#diveHint");
+const diveHud = $("#diveHud"), diveHint = $("#diveHint");
 $("#seaIcons").innerHTML = SEA.map((c) => `<i data-id="${c.id}" title="${c.year}">${SEA_ICON[c.id]}</i>`).join("");
 const mkSea = document.createElement("div"); mkSea.className = "mk bot sea"; mkSea.innerHTML = '<div class="lbl">반짝이는 무언가<b></b></div><div class="dia"></div>'; ui.markers.appendChild(mkSea);
 function updateSeaUI() {
@@ -2444,7 +2430,6 @@ async function enterDive() {
   camera.position.copy(_P).addScaledVector(_T, -8).add(new THREE.Vector3(0, 3, 0)); camLook.copy(_P);
   diveHud.hidden = false; requestAnimationFrame(() => diveHud.classList.remove("out"));
   diveHint.hidden = false; diveHint.classList.remove("out"); setTimeout(() => diveHint.classList.add("out"), 9000);
-  if (coarse) diveTouch.hidden = false;
   updateSeaUI();
   await fadeTo(false);
   if (DIVE.first) { DIVE.first = false; caption('<div class="c-kick">독도 바닷속 · 수심 18m</div><div class="c-big">바닷속 탐사 시작!</div><div class="c-small">반짝이는 곳을 찾아 헤엄쳐 가 보세요. 독도 바다에 사는 생물들을 만날 수 있어요.</div>', 5200); }
@@ -2455,7 +2440,7 @@ async function exitDive() {
   await fadeTo(true);
   setUnder(false);
   ghost.visible = false; mkSea.style.opacity = 0;
-  diveHud.classList.add("out"); diveHud.hidden = true; diveTouch.hidden = true; diveHint.hidden = true;
+  diveHud.classList.add("out"); diveHud.hidden = true; diveHint.hidden = true; joyRelease();
   S.state = "explore"; show(ui.explore, true);
   orbit.tween = null; orbit.target.copy(EXP.target); orbit.r = EXP.r; orbit.phi = EXP.phi; orbit.theta = EXP.theta + 0.3;
   await fadeTo(false);
@@ -2492,7 +2477,7 @@ function updateDive(dt, active) {
   }
   school.instanceMatrix.needsUpdate = true;
   // 잠수부 이동
-  const k = DIVE.keys, tx = clamp(k.l - k.r + DIVE.touch.x, -1, 1), ty = clamp(k.u - k.d + DIVE.touch.y, -1, 1);
+  const k = DIVE.keys, tx = clamp(k.l - k.r + DIVE.touch.x - JOY.x, -1, 1), ty = clamp(k.u - k.d + DIVE.touch.y - JOY.y, -1, 1);
   const moving = active && S.state === "dive";
   if (moving) {
     DIVE.u += (DIVE.speed * dt) / PATH_LEN;
@@ -2524,7 +2509,7 @@ function updateDive(dt, active) {
     ghost.children.forEach((c) => (c.material.opacity = 0.45 * Math.min(1, DIVE.ghostT / 2)));
   }
   // 카메라
-  const camT = _dv.clone().addScaledVector(_T, -8.5).add(new THREE.Vector3(0, 2.6, 0)).addScaledVector(_S, -1.6);
+  const camT = _dv.clone().addScaledVector(_T, -8.5 * portraitK(0.4)).add(new THREE.Vector3(0, 2.6, 0)).addScaledVector(_S, -1.6 / portraitK(1));
   camera.position.lerp(camT, 1 - Math.exp(-3 * dt));
   camLook.lerp(_dv.clone().addScaledVector(_T, 5), 1 - Math.exp(-4 * dt));
   camera.lookAt(camLook);
@@ -2540,7 +2525,7 @@ function updateDive(dt, active) {
   if (S.state === "dive" && next) {
     const p = project(_v.copy(next.pos).add(new THREE.Vector3(0, 4, 0)));
     mkSea.style.opacity = p.ok ? 1 : 0;
-    if (p.ok) { mkSea.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -100%)`; mkSea.querySelector("b").textContent = Math.round(nd * 1.8) + "m"; }
+    if (p.ok) { mkSea.style.transform = `translate(${clamp(p.x, 70, innerWidth - 70)}px, ${p.y}px) translate(-50%, -100%)`; mkSea.querySelector("b").textContent = Math.round(nd * 1.8) + "m"; }
   } else mkSea.style.opacity = 0;
 }
 function checkAllDone() {
@@ -2630,16 +2615,39 @@ function hold(el, on, off) {
   const end = () => { el.classList.remove("held"); off(); };
   el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end); el.addEventListener("lostpointercapture", end);
 }
-hold($("#tLeft"), () => (touchSteer = 1), () => (touchSteer = 0));
-hold($("#tRight"), () => (touchSteer = -1), () => (touchSteer = 0));
-hold($("#tBoost"), () => (touchBoost = true), () => (touchBoost = false));
-hold($("#dLeft"), () => (DIVE.touch.x = 1), () => (DIVE.touch.x = 0));
-hold($("#dRight"), () => (DIVE.touch.x = -1), () => (DIVE.touch.x = 0));
-hold($("#dUp"), () => (DIVE.touch.y = 1), () => (DIVE.touch.y = 0));
-hold($("#dDown"), () => (DIVE.touch.y = -1), () => (DIVE.touch.y = 0));
+
+/* 플로팅 조이스틱: 화면 어디든 누르면 그 자리에 생기고, 끄는 방향이 곧 조종 방향 */
+const joyEl = $("#joy"), joyKnob = joyEl.querySelector(".joy-knob");
+const JOY = { id: null, cx: 0, cy: 0, x: 0, y: 0, R: 56 };
+const joyMode = () => S.state === "voyage" || S.state === "dive";
+function joyStart(e, cx, cy) {
+  if (!joyMode() || JOY.id !== null) return false;
+  JOY.id = e.pointerId; JOY.cx = cx; JOY.cy = cy; JOY.x = JOY.y = 0;
+  joyEl.classList.add("on"); joyEl.style.left = cx - 64 + "px"; joyEl.style.top = cy - 64 + "px";
+  joyKnob.style.transform = ""; joyMove(e); return true;
+}
+function joyMove(e) {
+  if (e.pointerId !== JOY.id) return;
+  let dx = e.clientX - JOY.cx, dy = e.clientY - JOY.cy; const d = Math.hypot(dx, dy);
+  if (d > JOY.R) { dx *= JOY.R / d; dy *= JOY.R / d; }
+  joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+  const dz = (v) => (Math.abs(v) < 0.15 ? 0 : (v - Math.sign(v) * 0.15) / 0.85);
+  JOY.x = dz(dx / JOY.R); JOY.y = dz(dy / JOY.R);
+}
+function joyRelease(e) {
+  if (e && e.pointerId !== JOY.id) return;
+  JOY.id = null; JOY.x = JOY.y = 0;
+  joyEl.classList.remove("on"); joyEl.style.left = ""; joyEl.style.top = ""; joyKnob.style.transform = "";
+}
+joyEl.addEventListener("pointerdown", (e) => { e.preventDefault(); const r = joyEl.querySelector(".joy-base").getBoundingClientRect(); joyStart(e, r.left + r.width / 2, r.top + r.height / 2); });
+addEventListener("pointermove", (e) => { if (JOY.id !== null) joyMove(e); });
+addEventListener("pointerup", (e) => joyRelease(e));
+addEventListener("pointercancel", (e) => joyRelease(e));
+function updateJoyVis() { const want = coarse && (S.state === "voyage" || S.state === "dive" || S.state === "diveEnd"); if (joyEl.hidden === want) joyEl.hidden = !want; if (!joyMode() && JOY.id !== null) joyRelease(); }
 
 const cv = renderer.domElement;
 cv.addEventListener("pointerdown", (e) => {
+  if (joyStart(e, e.clientX, e.clientY)) return;
   if (!(S.state === "explore" || S.state === "finale")) return;
   cv.setPointerCapture(e.pointerId);
   orbit.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -2768,6 +2776,7 @@ function frame(now) {
   updateWake(dt);
   updateBoatParts(S.time, dt);
   applyWeather(dt);
+  updateJoyVis();
   animateFlags(S.time);
   updateMarkers();
 
