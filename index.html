@@ -182,6 +182,33 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .mk.dok .lbl { font-family: var(--f-display); font-weight: 800; font-size: 15px; border-color: rgba(255, 197, 110, .5); }
 .mk.bot .dia { width: 12px; height: 12px; transform: rotate(45deg); border: 2px solid var(--gold); background: rgba(255, 197, 110, .25); }
 
+/* 잠수 */
+.dive-btn { padding: 11px 18px; font-size: 15px; background: #2aa6b8; color: #04222a; box-shadow: 0 10px 30px -10px rgba(42, 166, 184, .7), inset 0 -3px 0 rgba(0, 0, 0, .15); }
+.dive-btn svg { width: 20px; height: 20px; }
+.dive-btn b { font-family: var(--f-num); font-weight: 500; background: rgba(255, 255, 255, .35); border-radius: 999px; padding: 1px 8px; }
+.dive-btn.done { background: rgba(132, 225, 214, .16); color: var(--teal); box-shadow: inset 0 0 0 1px rgba(132, 225, 214, .5); }
+#diveHud { padding-block: calc(16px + env(safe-area-inset-top, 0px)) 16px; padding-inline: 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; height: fit-content; transition: opacity .6s; }
+#diveHud.out { opacity: 0; pointer-events: none; }
+.dv-gauge { border-color: rgba(132, 225, 214, .35); background: rgba(4, 30, 40, .62); }
+.sea-icons { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; max-width: 220px; }
+.sea-icons i { width: 32px; height: 32px; border-radius: 10px; border: 1.5px dashed rgba(132, 225, 214, .45); display: grid; place-items: center; color: rgba(132, 225, 214, .5); }
+.sea-icons i svg { width: 19px; height: 19px; }
+.sea-icons i.on { border-style: solid; background: rgba(132, 225, 214, .2); color: var(--teal); }
+.dv-up { margin-right: 58px; padding: 11px 18px; font-size: 15px; white-space: nowrap; }
+.dv-up.glow { background: var(--gold); color: #2b1a05; box-shadow: 0 0 0 0 rgba(255, 197, 110, .6); animation: beacon 1.6s ease-out infinite; }
+#diveTouch { position: fixed; left: 0; right: 0; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 7; display: flex; justify-content: space-between; align-items: flex-end; padding-inline: 16px; pointer-events: none; }
+#diveTouch > div { display: flex; gap: 12px; pointer-events: auto; }
+#diveTouch .vstack { flex-direction: column; }
+.mk.sea .dia { border-color: var(--teal); background: rgba(132, 225, 214, .25); }
+.mk.sea .lbl b { color: var(--teal); }
+.doc.sea .seal { background: #1f6f9e; }
+/* 큰 파도 경고 */
+.wave-alert { position: fixed; top: 34%; left: 50%; transform: translateX(-50%); z-index: 9; background: rgba(120, 20, 18, .82); border: 2px solid #ff9d92; border-radius: 18px; padding: 14px 22px 12px; text-align: center; color: #fff; min-width: min(90vw, 360px); animation: pulseA .6s ease-in-out infinite alternate; pointer-events: none; }
+@keyframes pulseA { from { box-shadow: 0 0 0 0 rgba(255, 120, 100, .5); } to { box-shadow: 0 0 0 14px rgba(255, 120, 100, 0); } }
+.wa-text { font-size: clamp(17px, 2.6vw, 22px); font-weight: 700; }
+.wa-text b { font-size: 1.5em; color: var(--gold); margin: 0 4px; vertical-align: -2px; }
+.wa-bar { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .25); margin-top: 10px; overflow: hidden; }
+.wa-bar i { display: block; height: 100%; width: 0; background: var(--gold); }
 /* 유리병 기록 (문서) */
 .modal { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px; background: radial-gradient(80% 80% at 50% 50%, rgba(2, 6, 14, .45), rgba(2, 6, 14, .82)); overflow-y: auto; }
 .doc {
@@ -213,6 +240,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .doc blockquote cite { display: block; margin-top: 6px; font-family: var(--f-ui); font-style: normal; font-weight: 400; font-size: 13px; color: var(--hanji-dim); }
 .doc .note { font-weight: 700; color: #8a2a20; }
 .doc.nature .seal { background: #2f7a5c; }
+.doc.weather .seal { background: #4b5d78; }
+.doc.weather .note { color: #3b4d68; }
+.doc.sea .seal { background: #1f6f9e; }
+.doc.sea .note { color: #155a82; }
 .doc.nature blockquote { border-left-color: #2f7a5c; background: rgba(47, 122, 92, .07); }
 .doc.nature .note { color: #22644a; }
 .doc-year.word { font-size: clamp(38px, 6.4vw, 56px); line-height: 1.05; word-break: keep-all; }
@@ -293,8 +324,11 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 @media (max-width: 720px) {
   .sheet { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 66%; border-radius: 22px 22px 0 0; transform: translateY(105%); padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
   .sheet.open { transform: none; }
-  .slot { width: 42px; height: 42px; border-radius: 11px; }
-  .slot svg { width: 20px; height: 20px; }
+  .slot { width: 34px; height: 34px; border-radius: 9px; }
+  .slot svg { width: 18px; height: 18px; }
+  .slot .n { font-size: 8px; top: 1px; left: 3px; }
+  #slots { gap: 5px !important; }
+  .tray { padding: 8px; gap: 6px; }
   .tray .t-l { display: none; }
   .ex-title { max-width: 100%; }
   .ex-title p { display: none; }
@@ -421,7 +455,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   <div class="gauge right-g">
     <div class="kicker">유리병 기록</div>
     <div class="bottles" id="bottleIcons"></div>
-    <div class="stars">퀴즈 정답 <b id="starCount">0</b> / 12</div>
+    <div class="stars">퀴즈 정답 <b id="starCount">0</b>개</div>
   </div>
 </div>
 <div class="hint out" id="hint" hidden>
@@ -437,6 +471,31 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   <div><button class="tbtn boost" id="tBoost" type="button">가속</button></div>
 </div>
 
+<div class="wave-alert" id="waveAlert" hidden><div class="wa-text"></div><div class="wa-bar"><i></i></div></div>
+<div id="diveHud" class="layer out" hidden>
+  <div class="gauge dv-gauge">
+    <div class="kicker">수심</div>
+    <div class="dist-val" id="depthVal">18<small>m</small></div>
+    <div class="g-row"><span>바닷속 도감 <b id="seaCount">0 / 6</b></span></div>
+    <div class="sea-icons" id="seaIcons"></div>
+  </div>
+  <button class="btn ghost dv-up" id="surfaceBtn" type="button">물 위로 올라가기</button>
+</div>
+<div class="hint out" id="diveHint" hidden>
+  <span><kbd>←</kbd><kbd>→</kbd>좌우</span>
+  <span><kbd>↑</kbd><kbd>↓</kbd>위아래</span>
+  <span>반짝이는 곳을 찾아 헤엄쳐요</span>
+</div>
+<div id="diveTouch" hidden>
+  <div>
+    <button class="tbtn" id="dLeft" type="button" aria-label="왼쪽"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="tbtn" id="dRight" type="button" aria-label="오른쪽"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>
+  </div>
+  <div class="vstack">
+    <button class="tbtn" id="dUp" type="button" aria-label="위로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 15l7-7 7 7"/></svg></button>
+    <button class="tbtn" id="dDown" type="button" aria-label="아래로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 9l7 7 7-7"/></svg></button>
+  </div>
+</div>
 <div id="record" class="modal" hidden></div>
 
 <section id="explore" class="layer out" hidden>
@@ -447,6 +506,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
       <h2>독도 구석구석</h2>
       <p>번호를 눌러 살펴보고 도감에 담아요. 화면을 끌면 섬을 돌려 볼 수 있어요.</p>
     </div>
+    <button class="btn dive-btn" id="diveBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 9h18v5a3 3 0 0 1-3 3h-3l-3-3-3 3H6a3 3 0 0 1-3-3z"/><path d="M19 9V5"/></svg>바닷속 탐사 <b id="diveBtnCount">0/6</b></button>
     <button class="btn ghost" id="resetView" type="button" hidden>전체 보기</button>
   </div>
   <aside class="sheet" id="sheet" aria-live="polite">
@@ -633,6 +693,7 @@ const Snd = {
     const g = c.createGain(); g.gain.value = 0.2;
     const lfo = c.createOscillator(); lfo.frequency.value = 0.09; const lg = c.createGain(); lg.gain.value = 0.12;
     lfo.connect(lg); lg.connect(g.gain); src.connect(f); f.connect(g); g.connect(this.master); src.start(); lfo.start();
+    this.oceanFilter = f; this.oceanGainNode = g;
     const eo = c.createOscillator(); eo.type = "sawtooth"; eo.frequency.value = 46;
     const ef = c.createBiquadFilter(); ef.type = "lowpass"; ef.frequency.value = 170;
     const eg = c.createGain(); eg.gain.value = 0;
@@ -675,6 +736,46 @@ const Snd = {
       o.connect(bp); bp.connect(g); g.connect(this.master); g.connect(this.fx); o.start(at); o.stop(at + 0.32);
     }
   },
+  noiseBuf() {
+    if (this._nb) return this._nb;
+    const c = this.ctx, len = c.sampleRate * 3, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    return (this._nb = buf);
+  },
+  setStorm(level) {
+    const c = this.ctx; if (!c) return;
+    if (!this.rainG) {
+      const src = c.createBufferSource(); src.buffer = this.noiseBuf(); src.loop = true;
+      const hp = c.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 1800;
+      const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 7000;
+      this.rainG = c.createGain(); this.rainG.gain.value = 0;
+      src.connect(hp); hp.connect(lp); lp.connect(this.rainG); this.rainG.connect(this.master); src.start();
+    }
+    this.rainG.gain.setTargetAtTime(level * 0.05, c.currentTime, 1.2);
+    if (this.oceanGainNode) this.oceanGainNode.gain.setTargetAtTime(level ? 0.38 : 0.2, c.currentTime, 1.5);
+  },
+  burst(dur, f0, f1, vol, type = "lowpass") {
+    const c = this.ctx; if (!c) return; const t = c.currentTime;
+    const src = c.createBufferSource(); src.buffer = this.noiseBuf();
+    const f = c.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(this.master); src.start(t); src.stop(t + dur + 0.1);
+  },
+  thunder() { this.burst(3.2, 900, 60, 0.5); setTimeout(() => this.burst(2.2, 400, 50, 0.3), 280); },
+  splash() { this.burst(1.2, 4000, 500, 0.25, "bandpass"); },
+  whoosh() { this.burst(2.4, 300, 1400, 0.12, "bandpass"); },
+  bubble() {
+    const c = this.ctx; if (!c) return; const t = c.currentTime;
+    const o = c.createOscillator(); o.type = "sine"; const f = 380 + Math.random() * 500;
+    o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 2.2, t + 0.09);
+    const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.05, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    o.connect(g); g.connect(this.master); o.start(t); o.stop(t + 0.14);
+  },
+  setUnder(on) {
+    const c = this.ctx; if (!c || !this.oceanFilter) return;
+    this.oceanFilter.frequency.setTargetAtTime(on ? 220 : 650, c.currentTime, 0.4);
+    if (this.oceanGainNode) this.oceanGainNode.gain.setTargetAtTime(on ? 0.34 : 0.2, c.currentTime, 0.4);
+  },
   toggle() { this.on = !this.on; if (this.master) this.master.gain.setTargetAtTime(this.on ? 0.9 : 0, this.ctx.currentTime, 0.1); },
 };
 
@@ -697,12 +798,21 @@ stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.5, 9500);
-const U = { uTime: { value: 0 }, uSunDir: { value: new THREE.Vector3(0, 0.05, -1).normalize() }, uFogDensity: { value: 0.00027 } };
+const U = {
+  uTime: { value: 0 }, uSunDir: { value: new THREE.Vector3(0, 0.05, -1).normalize() }, uFogDensity: { value: 0.00027 },
+  uStorm: { value: 0 }, uFlash: { value: 0 }, uWaveAmp: { value: 1 },
+  uRogue: { value: new THREE.Vector4(0, 0, -999, 0) }, uRogueDir: { value: new THREE.Vector2(1, 0) },
+  uUnder: { value: 0 }, uUnderCol: { value: new THREE.Color("#0f5a6e") },
+};
 
 const SKY_GLSL = /* glsl */`
 uniform vec3 uSunDir;
 uniform float uTime;
 uniform float uFogDensity;
+uniform float uStorm;
+uniform float uFlash;
+uniform float uUnder;
+uniform vec3 uUnderCol;
 float dkHash(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 vec3 dkSky(vec3 d){
   float e = uSunDir.y;
@@ -725,6 +835,9 @@ vec3 dkSky(vec3 d){
   col += vec3(1.0, 0.72, 0.42) * pow(s, 90.0) * 1.3 * vis;
   col += vec3(1.0, 0.86, 0.62) * smoothstep(0.99955, 0.99985, s) * 14.0 * vis;
   if (d.y < 0.0) col = mix(hor, hor * 0.5, smoothstep(0.0, 0.2, -d.y));
+  vec3 stormCol = vec3(0.13, 0.15, 0.18) * (0.45 + 0.55 * smoothstep(-0.12, 0.3, e)) * (0.85 + 0.3 * h);
+  col = mix(col, stormCol, uStorm * 0.9);
+  col += vec3(0.7, 0.76, 0.9) * uFlash;
   return col;
 }`;
 
@@ -732,14 +845,20 @@ const FOG_APPLY = /* glsl */`
 {
   vec3 toP = vFogWorld - cameraPosition;
   float fd = length(toP);
-  float ff = 1.0 - exp(-fd * uFogDensity);
-  vec3 hz = dkSky(normalize(vec3(toP.x, 0.0001, toP.z)));
-  gl_FragColor.rgb = mix(gl_FragColor.rgb, hz, ff);
+  if (uUnder > 0.5) {
+    float uf = 1.0 - exp(-fd * 0.026);
+    vec3 uc = uUnderCol * (0.35 + 0.65 * smoothstep(-34.0, 0.0, vFogWorld.y));
+    gl_FragColor.rgb = mix(gl_FragColor.rgb * vec3(0.75, 0.95, 1.0), uc, uf);
+  } else {
+    float ff = 1.0 - exp(-fd * uFogDensity);
+    vec3 hz = dkSky(normalize(vec3(toP.x, 0.0001, toP.z)));
+    gl_FragColor.rgb = mix(gl_FragColor.rgb, hz, ff);
+  }
 }`;
 
 function patchFog(mat) {
   mat.onBeforeCompile = (sh) => {
-    sh.uniforms.uSunDir = U.uSunDir; sh.uniforms.uTime = U.uTime; sh.uniforms.uFogDensity = U.uFogDensity;
+    for (const k of ["uSunDir", "uTime", "uFogDensity", "uStorm", "uFlash", "uUnder", "uUnderCol"]) sh.uniforms[k] = U[k];
     sh.vertexShader = sh.vertexShader
       .replace("#include <common>", "#include <common>\nvarying vec3 vFogWorld;")
       .replace("#include <project_vertex>", "#include <project_vertex>\nvFogWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;");
@@ -768,7 +887,8 @@ const sky = new THREE.Mesh(
       void main(){
         vec3 d = normalize(vDir);
         vec3 col = dkSky(d);
-        float starAmt = smoothstep(0.03, -0.1, uSunDir.y) * smoothstep(0.02, 0.3, d.y);
+        if (uUnder > 0.5) col = uUnderCol * (0.3 + 0.75 * smoothstep(-0.6, 0.8, d.y));
+        float starAmt = smoothstep(0.03, -0.1, uSunDir.y) * smoothstep(0.02, 0.3, d.y) * (1.0 - uUnder) * (1.0 - uStorm);
         vec3 p = d * 280.0; vec3 c = floor(p); float r = dkHash(c);
         if (r > 0.9965) { vec3 f = fract(p) - 0.5; float tw = 0.6 + 0.4 * sin(uTime * 1.7 + r * 120.0); col += vec3(0.85, 0.9, 1.0) * smoothstep(0.24, 0.0, length(f)) * starAmt * tw * 1.6; }
         gl_FragColor = vec4(col, 1.0);
@@ -887,7 +1007,9 @@ const WAVES = [[1, 0.35, 0.1, 42], [-0.45, 1, 0.08, 23], [0.7, -0.55, 0.06, 13]]
 function waveY(x, z, t) {
   let y = 0;
   for (const w of WAVES) { const l = Math.hypot(w[0], w[1]), dx = w[0] / l, dz = w[1] / l, k = (2 * Math.PI) / w[3], c = Math.sqrt(9.8 / k); y += (w[2] / k) * Math.sin(k * (dx * x + dz * z - c * t * 0.6)); }
-  return y;
+  const R = U.uRogue.value, D = U.uRogueDir.value;
+  const rd = (x - R.x) * D.x + (z - R.y) * D.y - R.z;
+  return y * U.uWaveAmp.value + R.w * Math.exp(-rd * rd / 90);
 }
 function polarGrid(rings, segs) {
   const pos = [0, 0, 0], idx = [];
@@ -909,7 +1031,10 @@ const water = new THREE.Mesh(
     uniforms: { ...U, uIsl: { value: [new THREE.Vector2(W.cx, W.cz), new THREE.Vector2(E.cx, E.cz), new THREE.Vector2(ULL.cx, ULL.cz)] }, uR: { value: rArr }, uBoatInv: { value: new THREE.Matrix4() }, uBoatOn: { value: 0 } },
     vertexShader: /* glsl */`
       uniform float uTime;
-      varying vec3 vWorld; varying vec3 vN;
+      uniform float uWaveAmp;
+      uniform vec4 uRogue;
+      uniform vec2 uRogueDir;
+      varying vec3 vWorld; varying vec3 vN; varying float vRogue;
       vec3 gw(vec4 w, vec3 p, float amp, inout vec3 T, inout vec3 B){
         float k = 6.2831853 / w.w; float c = sqrt(9.8 / k); vec2 d = normalize(w.xy);
         float f = k * (dot(d, p.xz) - c * uTime * 0.6);
@@ -920,21 +1045,29 @@ const water = new THREE.Mesh(
       }
       void main(){
         vec3 p = (modelMatrix * vec4(position, 1.0)).xyz;
-        float amp = 1.0 - smoothstep(260.0, 1400.0, length(p.xz - cameraPosition.xz));
+        float amp = (1.0 - smoothstep(260.0, 1400.0, length(p.xz - cameraPosition.xz))) * uWaveAmp;
         vec3 T = vec3(1.0, 0.0, 0.0), B = vec3(0.0, 0.0, 1.0);
         vec3 g = p;
         g += gw(vec4(1.0, 0.35, 0.10, 42.0), p, amp, T, B);
         g += gw(vec4(-0.45, 1.0, 0.08, 23.0), p, amp, T, B);
         g += gw(vec4(0.7, -0.55, 0.06, 13.0), p, amp, T, B);
-        vN = normalize(cross(B, T)); vWorld = g;
+        vec3 nrm = normalize(cross(B, T));
+        float rd = dot(p.xz - uRogue.xy, uRogueDir) - uRogue.z;
+        float rh = uRogue.w * exp(-rd * rd / 90.0);
+        g.y += rh;
+        float slope = -2.0 * rd / 90.0 * rh;
+        nrm = normalize(nrm - vec3(uRogueDir.x * slope, 0.0, uRogueDir.y * slope) * 0.6);
+        vRogue = rh / max(uRogue.w, 0.001) * step(0.01, uRogue.w);
+        vN = nrm; vWorld = g;
         gl_Position = projectionMatrix * viewMatrix * vec4(g, 1.0);
       }`,
     fragmentShader: SKY_GLSL + /* glsl */`
       uniform vec2 uIsl[3];
+      uniform float uWaveAmp;
       uniform vec4 uR[48];
       uniform mat4 uBoatInv;
       uniform float uBoatOn;
-      varying vec3 vWorld; varying vec3 vN;
+      varying vec3 vWorld; varying vec3 vN; varying float vRogue;
       float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       float vn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
         return mix(mix(h2(i), h2(i + vec2(1, 0)), f.x), mix(h2(i + vec2(0, 1)), h2(i + vec2(1, 1)), f.x), f.y); }
@@ -974,7 +1107,8 @@ const water = new THREE.Mesh(
         float fn = vn(uv * 0.55 + vec2(uTime * 0.6, -uTime * 0.3)) * vn(uv * 1.4 - uTime * 0.25);
         float band = smoothstep(1.12, 1.0, sh) * (0.55 + 0.45 * sin(sh * 70.0 - uTime * 2.2));
         float foam = clamp(band * smoothstep(0.08, 0.32, fn + band * 0.25), 0.0, 1.0);
-        foam += smoothstep(0.85, 1.25, vWorld.y) * smoothstep(0.35, 0.7, fn) * 0.35 * near;
+        foam += smoothstep(0.85, 1.25, vWorld.y / max(uWaveAmp, 1.0)) * smoothstep(0.35, 0.7, fn) * 0.35 * near * uWaveAmp;
+        foam += smoothstep(0.55, 0.95, vRogue) * smoothstep(0.2, 0.6, fn + 0.2) * 0.9;
         col = mix(col, vec3(0.86, 0.9, 0.95) * (0.22 + 0.78 * dayAmt), clamp(foam, 0.0, 1.0) * 0.85);
         float sd = max(dot(R, uSunDir), 0.0);
         float glit = step(0.86, vn(uv * 2.3 + uTime * 0.8)) * near;
@@ -1498,10 +1632,10 @@ const START_Z = ULL.cz - ULL.Rf(-Math.PI / 2) - 150;
 const ARRIVE_Z = DOK.z + 230;
 const ROUTE = START_Z - ARRIVE_Z;
 const S = {
-  state: "loading", time: 0, t: 0, collected: 0, stars: 0, spots: new Set(), focus: null, frame: 0,
+  state: "loading", time: 0, t: 0, collected: 0, stars: 0, quizzes: 0, spots: new Set(), sea: new Set(), focus: null, frame: 0, waveAmp: 1,
   boat: { x: 0, z: START_Z, psi: 0, speed: 0, lean: 0, y: 0 },
 };
-const BOTTLE_Z = RECORDS.map((_, i) => -380 - i * 425), BOTTLE_X = [6, -40, 36, -28, 30, -44, 18, -20, 42, -34, 24, -10];
+const BOTTLE_Z = RECORDS.map((_, i) => -380 - i * 395 - (i >= 6 ? 450 : 0)), BOTTLE_X = [6, -40, 36, -28, 30, -44, 18, -20, 42, -34, 24, -10];
 document.getElementById("bottleIcons").innerHTML = RECORDS.map((r) => `<i class="${r.kind}"></i>`).join("");
 BOTTLE_Z.forEach((z, i) => { const g = makeBottle(); g.visible = false; bottles.push({ g, x: BOTTLE_X[i], z, done: false, fly: 0 }); });
 
@@ -1536,7 +1670,8 @@ const unitsToKm = 87.4 / ROUTE;
 
 /* ---------- 카메라 ---------- */
 const camLook = new THREE.Vector3();
-const EXP = { target: new THREE.Vector3(DOK.x, 22, DOK.z), r: 240, phi: 1.17, theta: 1.2 };
+const portraitK = (p = 0.75) => Math.pow(clamp(1 / camera.aspect, 1, 2.2), p);
+const EXP = { target: new THREE.Vector3(DOK.x, 22, DOK.z), get r() { return 240 * portraitK(0.95); }, phi: 1.17, theta: 1.2 };
 const orbit = { target: EXP.target.clone(), r: EXP.r, phi: EXP.phi, theta: EXP.theta, tween: null, idle: 0, drag: null, pointers: new Map(), pinch: 0 };
 function sphPos(o, out) { return out.set(o.target.x + o.r * Math.sin(o.phi) * Math.sin(o.theta), o.target.y + o.r * Math.cos(o.phi), o.target.z + o.r * Math.sin(o.phi) * Math.cos(o.theta)); }
 function flyTo(target, r, phi, theta, dur = 1.8) {
@@ -1547,7 +1682,8 @@ function flyTo(target, r, phi, theta, dur = 1.8) {
 /* ---------- 항해 ---------- */
 function resetVoyage() {
   Object.assign(S.boat, { x: 0, z: START_Z, psi: 0, speed: 0, lean: 0 });
-  S.collected = 0; S.stars = 0;
+  S.collected = 0; S.stars = 0; S.quizzes = 0;
+  Object.assign(STORM, { state: "none", t: 0, level: 0, wave: null, wi: 0, ok: 0 }); U.uRogue.value.w = 0;
   bottles.forEach((b, i) => { b.done = false; b.fly = 0; b.x = BOTTLE_X[i]; b.z = BOTTLE_Z[i]; b.g.visible = true; b.g.scale.setScalar(1); });
   updateHudStatic();
 }
@@ -1583,7 +1719,8 @@ function updateVoyage(dt, control) {
   if (b.x < -140) b.psi = damp(b.psi, -0.35, 2, dt);
   b.psi = clamp(b.psi, -0.65, 0.65);
   const boosting = control && (keys.boost || touchBoost);
-  b.speed = damp(b.speed, control ? (boosting ? 42 : 27) : 0, control ? 1.1 : 2.2, dt);
+  const stormy = STORM.level > 0.3;
+  b.speed = damp(b.speed, control ? (boosting && !stormy ? 42 : stormy ? 20 : 27) : 0, control ? 1.1 : 2.2, dt);
   b.x += -Math.sin(b.psi) * b.speed * dt; b.z += -Math.cos(b.psi) * b.speed * dt;
   b.lean = damp(b.lean, steer * 0.13, 3, dt);
   placeBoat(dt);
@@ -1595,6 +1732,7 @@ function updateVoyage(dt, control) {
   camera.position.set(damp(camera.position.x, cx, 3.2, dt), damp(camera.position.y, cy, 3.2, dt), damp(camera.position.z, cz, 3.2, dt));
   camLook.set(damp(camLook.x, b.x + fx * 30, 4, dt), damp(camLook.y, 2.8, 4, dt), damp(camLook.z, b.z + fz * 30, 4, dt));
   camera.lookAt(camLook);
+  if (STORM.shake > 0) { camera.rotation.z += (Math.random() - 0.5) * 0.06 * STORM.shake; camera.position.y += (Math.random() - 0.5) * 0.5 * STORM.shake; }
   camera.fov = damp(camera.fov, 54 + (b.speed / 42) * 9, 2, dt); camera.updateProjectionMatrix();
   // 하늘: 항해할수록 동이 튼다
   const prog = clamp((START_Z - b.z) / ROUTE, 0, 1);
@@ -1607,6 +1745,8 @@ function updateVoyage(dt, control) {
   $("#boatPin").style.left = (prog * 100).toFixed(2) + "%";
   $("#routeDone").style.width = (prog * 100).toFixed(2) + "%";
   if (control) {
+    if (STORM.state === "none" && b.z < STORM_Z) startStorm();
+    updateStorm(dt);
     if (!S.flagNear && kmLeft(b.z) < 46) { S.flagNear = true; caption('<div class="c-small">수평선 너머로 <b style="color:var(--gold)">등대 불빛</b>이 깜빡여요. 독도 등대가 밤바다의 배들에게 길을 알려 주고 있어요.</div>', 5200); }
     if (!S.flagGulls && kmLeft(b.z) < 25) { S.flagGulls = true; Snd.gull(); caption('<div class="c-small">괭이갈매기들이 배를 따라와요. 고양이처럼 ‘냐옹’ 하고 울어서 괭이갈매기래요.</div>', 4800); }
   }
@@ -1650,6 +1790,109 @@ function updateMarkers() {
   }
 }
 
+/* ---------- 풍랑 ---------- */
+const WEATHER_NOTE = {
+  kind: "weather", year: "풍랑주의보", era: "항해 중 만난 독도 바다의 날씨", title: "독도에 내리기 어려운 까닭",
+  body: "독도 바다는 날씨가 자주 바뀌고 파도가 높아요. 그래서 배가 독도 앞까지 갔다가도 배를 대지 못하고 그냥 돌아가는 날이 많아요. ‘삼대가 덕을 쌓아야 독도 땅을 밟을 수 있다’는 말이 있을 정도예요.",
+  facts: [["풍랑주의보", "바람 초속 14m 이상이 3시간 넘게"], ["또는", "파도 높이 3m 넘게"], ["안전한 항해", "뱃머리로 파도 받기"]],
+  note: "기상청은 바다의 날씨가 위험해질 것 같으면 풍랑주의보를 내려 배들이 조심하도록 알려요.",
+  quiz: { q: "높은 파도가 몰려올 때, 배는 파도를 어느 쪽으로 받아야 더 안전할까요?", a: ["뱃머리(앞쪽)", "배의 옆구리"], c: 0, why: "파도를 옆구리로 받으면 배가 크게 기울어 위험해요. <b>뱃머리</b>로 파도를 가르며 넘어야 해요." },
+};
+const STORM_Z = BOTTLE_Z[5] - 150;
+const STORM = { state: "none", t: 0, level: 0, waves: [], wi: 0, wave: null, ok: 0, flashT: 4, thunderAt: -1, shake: 0 };
+const RAIN_N = 1400;
+const rain = (() => {
+  const pos = new Float32Array(RAIN_N * 6);
+  const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  const m = new THREE.LineBasicMaterial({ color: "#b9c8da", transparent: true, opacity: 0, depthWrite: false });
+  const l = new THREE.LineSegments(g, m); l.frustumCulled = false; l.visible = false; scene.add(l);
+  const seed = new Float32Array(RAIN_N * 3); for (let i = 0; i < RAIN_N * 3; i++) seed[i] = Math.random();
+  return { l, pos, seed };
+})();
+function updateRain(dt) {
+  const lv = STORM.level; rain.l.visible = lv > 0.02; rain.l.material.opacity = 0.55 * lv;
+  if (!rain.l.visible) return;
+  const cx = camera.position.x, cy = camera.position.y, cz = camera.position.z, t = S.time;
+  for (let i = 0; i < RAIN_N; i++) {
+    const sx = rain.seed[i * 3], sy = rain.seed[i * 3 + 1], sz = rain.seed[i * 3 + 2];
+    const fall = ((sy * 40 - t * 38) % 40 + 40) % 40;
+    const x = cx + (sx - 0.5) * 80 + 0.25 * fall, y = cy - 8 + fall, z = cz + (sz - 0.5) * 80;
+    rain.pos[i * 6] = x; rain.pos[i * 6 + 1] = y; rain.pos[i * 6 + 2] = z;
+    rain.pos[i * 6 + 3] = x - 0.5; rain.pos[i * 6 + 4] = y + 2.2; rain.pos[i * 6 + 5] = z;
+  }
+  rain.l.geometry.attributes.position.needsUpdate = true;
+}
+const waveAlert = $("#waveAlert");
+function startStorm() {
+  STORM.state = "build"; STORM.t = 0; STORM.wi = 0; STORM.ok = 0;
+  STORM.waves = [{ at: 6, side: 1 }, { at: 14, side: -1 }, { at: 22, side: 1 }];
+  Snd.setStorm(1);
+  caption('<div class="c-kick">기상 속보</div><div class="c-big">풍랑주의보!</div><div class="c-small">하늘이 어두워지고 파도가 높아지고 있어요. 큰 파도가 오면 <b style="color:var(--gold)">뱃머리를 파도 쪽으로</b> 돌려야 해요!</div>', 5600);
+}
+function updateStorm(dt) {
+  if (STORM.state === "none" || STORM.state === "done") return;
+  STORM.t += dt;
+  const b = S.boat;
+  if (STORM.state === "build") { STORM.level = Math.min(1, STORM.level + dt / 4); if (STORM.t > 4.5) { STORM.state = "on"; STORM.t = 0; } }
+  else if (STORM.state === "on") {
+    STORM.level = 1;
+    const w = STORM.waves[STORM.wi];
+    if (!STORM.wave && w && STORM.t >= w.at) {
+      // 배의 옆쪽(side: 1 왼쪽, -1 오른쪽) 130 거리에서 큰 파도가 다가온다
+      const fx = -Math.sin(b.psi), fz = -Math.cos(b.psi), lx = fz * w.side, lz = -fx * w.side;
+      U.uRogue.value.set(b.x + lx * 130, b.z + lz * 130, 0, 3.4);
+      U.uRogueDir.value.set(-lx, -lz);
+      STORM.wave = { side: w.side, psi0: b.psi, s: 0, judged: false, dir: new THREE.Vector2(-lx, -lz) };
+      waveAlert.hidden = false; waveAlert.className = "wave-alert " + (w.side > 0 ? "left" : "right");
+      waveAlert.querySelector(".wa-text").innerHTML = (w.side > 0 ? "왼쪽" : "오른쪽") + "에서 큰 파도! <b>" + (w.side > 0 ? "←" : "→") + "</b> 뱃머리를 파도 쪽으로";
+      Snd.whoosh();
+    }
+    if (STORM.wave) {
+      const wv = STORM.wave; wv.s += dt * 32; U.uRogue.value.z = wv.s;
+      waveAlert.querySelector(".wa-bar i").style.width = clamp(wv.s / 130, 0, 1) * 100 + "%";
+      if (!wv.judged && wv.s >= 128) {
+        wv.judged = true; waveAlert.hidden = true;
+        const fx = -Math.sin(b.psi), fz = -Math.cos(b.psi);
+        const into = fx * -wv.dir.x + fz * -wv.dir.y; // 뱃머리가 파도 쪽을 얼마나 향했는가
+        if (into > 0.16) { STORM.ok++; Snd.good(); toast("좋아요! 뱃머리로 파도를 가르며 넘었어요 🌊"); }
+        else {
+          Snd.splash(); STORM.shake = 1; b.speed *= 0.45; b.lean += 0.35 * wv.side;
+          for (let i = 0; i < 90; i++) { const a = Math.random() * Math.PI * 2, r = 2 + Math.random() * 3; emitWake(b.x + Math.cos(a) * r, 0, b.z + Math.sin(a) * r, Math.cos(a) * 6, Math.sin(a) * 6, 1 + Math.random() * 1.2); }
+          toast("배가 크게 흔들렸어요! 파도는 옆구리가 아니라 뱃머리로 받아야 안전해요.", 3600);
+        }
+      }
+      if (wv.s > 260) { STORM.wave = null; STORM.wi++; U.uRogue.value.w = 0; }
+    }
+    if (STORM.wi >= STORM.waves.length && !STORM.wave) { STORM.state = "clear"; STORM.t = 0; }
+  } else if (STORM.state === "clear") {
+    STORM.level = Math.max(0, STORM.level - dt / 5);
+    if (STORM.level <= 0) {
+      STORM.state = "done"; Snd.setStorm(0);
+      caption('<div class="c-small">' + (STORM.ok >= 2 ? "멋져요! 큰 파도를 " + STORM.ok + "번이나 안전하게 넘었어요." : "휴, 풍랑이 지나갔어요.") + " 구름이 걷히고 다시 독도가 보여요.</div>", 4200);
+      setTimeout(() => {
+        if (S.state !== "voyage") return;
+        S.state = "record";
+        openNote(WEATHER_NOTE, { next: "항해 계속하기", onDone: () => { S.state = "voyage"; } });
+      }, 2400);
+    }
+  }
+  // 번개
+  if (STORM.level > 0.6) {
+    STORM.flashT -= dt;
+    if (STORM.flashT <= 0) { U.uFlash.value = 1.2; STORM.flashT = 3 + Math.random() * 4; STORM.thunderAt = S.time + 0.4 + Math.random() * 1.2; }
+  }
+  if (STORM.thunderAt > 0 && S.time > STORM.thunderAt) { Snd.thunder(); STORM.thunderAt = -1; }
+}
+function applyWeather(dt) {
+  const lv = STORM.level;
+  U.uStorm.value = lv;
+  U.uWaveAmp.value = 1 + 1.4 * lv;
+  U.uFogDensity.value = S.state === "dive" || S.state === "diveCard" ? 0.00027 : 0.00027 + lv * 0.0011;
+  U.uFlash.value = Math.max(0, U.uFlash.value - dt * 4);
+  STORM.shake = Math.max(0, STORM.shake - dt * 1.5);
+  updateRain(dt);
+}
+
 /* ---------- 기록 문서 ---------- */
 function collect(bt) {
   bt.done = true; bt.fly = 0;
@@ -1662,15 +1905,23 @@ function photoHTML(ph, dark) {
   if (!ph) return "";
   return `<figure class="photo${dark ? " dark" : ""}"><img src="${ph.src}" alt="${ph.alt}" onerror="this.closest('figure').remove()"><figcaption>${ph.alt}<span>사진: ${ph.credit}</span></figcaption></figure>`;
 }
-function openRecord(i) {
-  const r = RECORDS[i], nat = r.kind === "nature";
+const NOTE_KIND = {
+  history: { seal: "기록", kick: "유리병 속 역사 기록", cls: "" },
+  nature: { seal: "자연", kick: "자연 관찰 노트", cls: "nature" },
+  weather: { seal: "날씨", kick: "항해 날씨 노트", cls: "weather" },
+  sea: { seal: "바다", kick: "바닷속 관찰 노트", cls: "sea" },
+};
+/* 기록 카드 하나를 띄운다. opts: n(번호), total, next(버튼 글자), onDone */
+function openNote(r, opts) {
+  const K = NOTE_KIND[r.kind] || NOTE_KIND.history;
+  const unit = r.unit ?? (r.kind === "history" ? "년" : "");
   ui.record.innerHTML = `
-    <article class="doc ${nat ? "nature" : ""}" role="dialog" aria-modal="true" aria-labelledby="docTitle">
+    <article class="doc ${K.cls}" role="dialog" aria-modal="true" aria-labelledby="docTitle">
       <div class="doc-head">
-        <div class="seal" aria-hidden="true">${nat ? "자연" : "기록"}<br>${i + 1}</div>
+        <div class="seal" aria-hidden="true">${K.seal}${opts.n ? "<br>" + opts.n : ""}</div>
         <div style="min-width:0">
-          <div class="doc-kick">${nat ? "자연 관찰 노트" : "유리병 속 역사 기록"} · ${i + 1} / ${NREC}</div>
-          <div class="doc-year ${r.year.length > 5 ? "word" : ""}">${r.year}<small>${r.unit ?? (nat ? "" : "년")}</small></div>
+          <div class="doc-kick">${K.kick}${opts.total ? ` · ${opts.n} / ${opts.total}` : ""}</div>
+          <div class="doc-year ${r.year.length > 5 ? "word" : ""}">${r.year}<small>${unit}</small></div>
           <div class="doc-era">${r.era}${r.src ? " · " + r.src : ""}</div>
         </div>
       </div>
@@ -1685,7 +1936,7 @@ function openRecord(i) {
         <div class="opts">${r.quiz.a.map((a, k) => `<button class="opt" type="button" data-k="${k}">${a}</button>`).join("")}</div>
         <p class="why" id="why"></p>
       </div>
-      <button class="btn" type="button" id="docNext" hidden>${i === NREC - 1 ? "독도를 향해 계속 항해" : "항해 계속하기"}</button>
+      <button class="btn" type="button" id="docNext" hidden>${opts.next}</button>
     </article>`;
   ui.record.hidden = false;
   ui.record.querySelectorAll(".opt").forEach((btn) => btn.addEventListener("click", () => {
@@ -1693,11 +1944,15 @@ function openRecord(i) {
     ui.record.querySelectorAll(".opt").forEach((o) => { o.disabled = true; if (+o.dataset.k === r.quiz.c) o.classList.add("right"); });
     if (right) { S.stars++; Snd.good(); $("#why").innerHTML = "정답이에요! " + r.quiz.why; }
     else { btn.classList.add("wrong"); Snd.bad(); $("#why").innerHTML = "아쉬워요. 정답은 <b>" + r.quiz.a[r.quiz.c] + "</b>. " + r.quiz.why; }
+    S.quizzes++;
     updateHudStatic();
     const nx = $("#docNext"); nx.hidden = false; nx.focus({ preventScroll: true }); nx.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }));
-  $("#docNext").addEventListener("click", () => { ui.record.hidden = true; S.state = "voyage"; renderer.domElement.focus?.(); });
+  $("#docNext").addEventListener("click", () => { ui.record.hidden = true; opts.onDone?.(); });
   ui.record.querySelector(".opt").focus({ preventScroll: true });
+}
+function openRecord(i) {
+  openNote(RECORDS[i], { n: i + 1, total: NREC, next: i === NREC - 1 ? "독도를 향해 계속 항해" : "항해 계속하기", onDone: () => { S.state = "voyage"; } });
 }
 
 /* ---------- 흐름 ---------- */
@@ -1740,7 +1995,7 @@ function startExplore(skipped) {
   ui.letterbox.classList.remove("on");
   ui.explore.hidden = false; show(ui.explore, true);
   if (skipped) caption('<div class="c-kick">37°14′N · 131°52′E</div><div class="c-big">독도</div><div class="c-small">동도와 서도, 그리고 89개의 작은 바위섬</div>', 4200);
-  setTimeout(() => toast("번호를 눌러 독도 구석구석을 탐사해 보세요!", 3600), skipped ? 4800 : 600);
+  setTimeout(() => toast("번호를 눌러 독도를 탐사하고, ‘바닷속 탐사’로 잠수도 해 보세요!", 4200), skipped ? 4800 : 600);
 }
 async function skipToExplore() {
   Snd.init(); Snd.music = true;
@@ -1788,7 +2043,7 @@ function openSpot(id) {
   S.focus = id;
   Object.values(hsEls).forEach((e) => e.classList.remove("active")); hsEls[id].classList.add("active");
   const v = spotView[id];
-  flyTo(spotPos[id].clone().add(new THREE.Vector3(0, -3, 0)), v.r, v.phi, v.th, 1.9);
+  flyTo(spotPos[id].clone().add(new THREE.Vector3(0, -3, 0)), v.r * portraitK(0.6), v.phi, v.th, 1.9);
   $("#resetView").hidden = false;
   $("#sheetBody").innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px">
@@ -1815,8 +2070,9 @@ function collectSpot(id) {
   const sl = document.querySelector(`.slot[data-id="${id}"]`); sl.classList.add("got", "pop"); sl.setAttribute("aria-label", SPOTS.find((x) => x.id === id).name + " (담음)");
   $("#dexCount").textContent = `${S.spots.size} / ${SPOTS.length}`;
   if (S.spots.size === SPOTS.length) {
-    $("#finishBtn").hidden = false; Snd.swell();
-    toast("독도 도감을 모두 채웠어요! 마지막 관문으로 영상을 보고 임명장을 받아요.", 4200);
+    Snd.swell();
+    if (checkAllDone()) toast("독도 도감과 바닷속 도감을 모두 채웠어요! 마지막 관문으로 가요.", 4200);
+    else toast("독도 도감 완성! 이제 ‘바닷속 탐사’로 독도 바닷속도 살펴봐요.", 4200);
   } else {
     const next = SPOTS.find((x) => !S.spots.has(x.id));
     toast(`도감 ${S.spots.size} / ${SPOTS.length} · 다음은 ${next.n}번 ${next.name}!`);
@@ -1856,6 +2112,438 @@ function updateOrbit(dt) {
   orbit.shift = damp(orbit.shift || 0, S.focus && innerWidth > 720 && S.state === "explore" ? 210 : 0, 3, dt);
   if (orbit.shift > 0.5) camera.setViewOffset(innerWidth, innerHeight, orbit.shift, 0, innerWidth, innerHeight); else camera.clearViewOffset();
   camera.updateProjectionMatrix();
+}
+
+/* ---------- 바닷속 잠수 탐사 ---------- */
+const SEA = [
+  { id: "kelp", kind: "sea", year: "바다 숲", era: "독도 바닷속 · 감태와 대황", title: "물고기들의 집, 바다 숲",
+    body: "독도 바닷속 바위에는 감태와 대황 같은 커다란 갈색 해조류가 숲을 이루어 자라요. 바다 숲은 물고기와 전복, 소라에게 먹이가 되고, 알을 낳고 숨는 집이 되어 줘요.",
+    facts: [["감태·대황", "갈색 해조류"], ["하는 일", "먹이·집·산소"], ["자라는 곳", "햇빛 드는 바위"]],
+    quiz: { q: "바다 숲이 하는 일이 아닌 것은?", a: ["바닷물을 짜게 만들기", "물고기의 집이 되어 주기"], c: 0, why: "바다 숲은 물고기에게 <b>먹이와 집</b>을 주고, 산소도 만들어요." } },
+  { id: "shrimp", kind: "sea", year: "독도새우", era: "깊고 차가운 독도 바다", title: "세 가지 독도새우",
+    body: "독도 주변의 깊고 차가운 바다에는 독도새우가 살아요. 붉은 몸에 흰 점과 줄이 있는 도화새우, 등에 가시가 돋은 닭새우, 몸에 줄무늬가 있는 꽃새우를 함께 ‘독도새우’라고 불러요.",
+    facts: [["도화새우", "붉은 몸에 흰 무늬"], ["닭새우", "등에 가시"], ["꽃새우", "몸에 줄무늬"]],
+    quiz: { q: "다음 중 독도새우가 아닌 것은?", a: ["대하", "도화새우"], c: 0, why: "<b>대하</b>는 서해에서 많이 잡히는 새우예요." } },
+  { id: "abalone", kind: "sea", year: "전복", era: "바위에 붙어 사는 조개", title: "바위에 딱 붙은 전복",
+    body: "전복은 넓적한 발로 바위에 단단히 붙어 살면서 미역, 다시마, 감태 같은 해조류를 갉아 먹어요. 껍데기에는 숨을 쉬는 구멍이 한 줄로 나 있어요.",
+    facts: [["먹이", "해조류"], ["껍데기", "숨구멍이 한 줄"], ["사는 곳", "얕은 바닷속 바위"]],
+    quiz: { q: "전복은 무엇을 먹고 살까요?", a: ["해조류", "작은 물고기"], c: 0, why: "전복은 <b>미역, 다시마, 감태</b> 같은 해조류를 먹어요." } },
+  { id: "cucumber", kind: "sea", year: "해삼", era: "바다 바닥의 청소부", title: "느릿느릿 해삼",
+    body: "해삼은 바다 바닥을 아주 천천히 기어 다니며 모래와 진흙 속 찌꺼기를 먹어요. 그리고 깨끗해진 모래를 내보내서 ‘바다의 청소부’라고 불려요.",
+    facts: [["별명", "바다의 청소부"], ["움직임", "아주 느리게 기어감"], ["몸", "오돌토돌한 돌기"]],
+    quiz: { q: "해삼이 ‘바다의 청소부’라고 불리는 까닭은?", a: ["바닥의 찌꺼기를 먹어서", "물고기를 잡아먹어서"], c: 0, why: "해삼은 바닥의 <b>찌꺼기</b>를 먹고 깨끗한 모래를 내보내요." } },
+  { id: "fish", kind: "sea", year: "혹돔", era: "독도 바위굴의 주인", title: "이마에 혹이 난 물고기",
+    body: "혹돔은 다 자라면 이마에 커다란 혹이 불룩 튀어나오는 물고기예요. 독도 바닷속 바위굴과 틈에 살아서, 다이버들 사이에서는 독도의 ‘혹돔굴’이 유명해요.",
+    facts: [["특징", "이마의 큰 혹"], ["몸 길이", "1m 가까이"], ["사는 곳", "바위굴과 틈"]],
+    quiz: { q: "혹돔이라는 이름은 어디에서 왔을까요?", a: ["이마의 혹", "몸의 색깔"], c: 0, why: "다 자라면 <b>이마에 혹</b>이 크게 튀어나와요." } },
+  { id: "urchin", kind: "sea", year: "갯녹음", era: "성게와 사라지는 바다 숲", title: "바다 숲이 사라지면",
+    body: "성게는 해조류를 먹어요. 그런데 바다가 따뜻해지거나 성게가 너무 많아지면 바다 숲이 사라지고 바위가 하얗게 변해요. 이것을 ‘갯녹음’이라고 해요. 독도 바다에서도 갯녹음이 나타나고 있어요.",
+    facts: [["성게 먹이", "해조류"], ["갯녹음", "바다 숲이 사라지는 일"], ["다른 이름", "바다 사막화"]],
+    note: "5월 10일 ‘바다식목일’에는 바닷속에 해조류를 심어 바다 숲을 가꿔요.",
+    quiz: { q: "바다 숲이 사라지고 바위가 하얗게 변하는 일을 무엇이라고 할까요?", a: ["갯녹음", "썰물"], c: 0, why: "<b>갯녹음</b>은 ‘바다 사막화’라고도 해요." } },
+];
+const SEA_ICON = {
+  kelp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 22c-2-5 2-7 0-12S9 4 9 2M15 22c2-4-2-6 0-10s-1-6 1-9"/></svg>',
+  shrimp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9c3-4 10-4 13 1 2 3 0 7-4 7H9l-3 3-1-4 4-1"/><path d="M14 6L21 2M15 8l6-2"/></svg>',
+  abalone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="14" rx="9" ry="6"/><path d="M8 11h.01M11 10h.01M14 10h.01M17 11h.01" stroke-linecap="round" stroke-width="2.5"/></svg>',
+  cucumber: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="10" width="18" height="6" rx="3"/><path d="M6 10V8M10 10V7M14 10V7M18 10V8"/></svg>',
+  fish: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 12c3-5 9-6 13-3l5-3v12l-5-3c-4 3-10 2-13-3z"/><circle cx="7" cy="7.5" r="2.5"/></svg>',
+  urchin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="4"/><path d="M12 3v4M12 19v3M3 13h4M17 13h4M5 6l3 3M19 6l-3 3M5 20l3-3M19 20l-3-3"/></svg>',
+};
+const floorY = (x, z) => -26 + 2.5 * Math.sin(x * 0.05) * Math.cos(z * 0.045) + 1.5 * Math.sin((x + z) * 0.11);
+const groundY = (x, z) => Math.max(floorY(x, z), W.heightAt(x, z), E.heightAt(x, z));
+const under = new THREE.Group(); under.visible = false; scene.add(under);
+const DIVE = { u: 0.02, ox: 0, oy: 0, speed: 7, keys: { l: 0, r: 0, u: 0, d: 0 }, touch: { x: 0, y: 0 }, bubbleT: 0, sndT: 0, ghostT: -1, done: false, first: true };
+
+// 잠수 길: 독도 둘레의 바닷속 비탈을 따라 한 바퀴
+const DIVE_PATH = (() => {
+  const pts = [], N = 30;
+  for (let k = 0; k < N; k++) {
+    const a = (k / N) * Math.PI * 2, dx = Math.cos(a), dz = Math.sin(a);
+    let r = 280;
+    while (r > 75 && groundY(DOK.x + dx * r, DOK.z + dz * r) < -15) r -= 2;
+    r = Math.max(r + 16, 80);
+    pts.push(new THREE.Vector3(DOK.x + dx * r, -10 + Math.sin(a * 3) * 2, DOK.z + dz * r));
+  }
+  return new THREE.CatmullRomCurve3(pts, true, "centripetal");
+})();
+const PATH_LEN = DIVE_PATH.getLength();
+const _T = new THREE.Vector3(), _S = new THREE.Vector3(), _P = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+function pathFrame(u, P, T, Sd) { DIVE_PATH.getPointAt(((u % 1) + 1) % 1, P); DIVE_PATH.getTangentAt(((u % 1) + 1) % 1, T); Sd.crossVectors(T, UP).normalize(); }
+
+// 물 밑에서 본 수면
+const underside = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600, 1, 1).rotateX(Math.PI / 2), new THREE.ShaderMaterial({
+  uniforms: U, transparent: false, depthWrite: true,
+  vertexShader: `varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+  fragmentShader: `uniform float uTime; uniform vec3 uUnderCol; varying vec3 vW;
+    void main(){ vec3 V = normalize(vW - cameraPosition); float d = length(vW - cameraPosition);
+      float n = sin(vW.x * 0.21 + uTime * 1.3) * sin(vW.z * 0.17 - uTime * 1.1) * 0.5 + 0.5;
+      float snell = smoothstep(0.62, 0.95, V.y);
+      vec3 col = mix(uUnderCol * 1.5, vec3(0.78, 0.96, 1.0), snell * 0.85 + n * 0.12 * (1.0 - snell));
+      col = mix(col, uUnderCol * 1.1, 1.0 - exp(-d * 0.01));
+      gl_FragColor = vec4(col, 1.0);
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+    }`,
+}));
+underside.position.y = 0.4; under.add(underside);
+
+// 바닥 (물결 빛무늬 포함)
+const CAUSTIC_GLSL = `float dkCaus(vec2 p, float t){ p *= 0.16; vec2 q = p; float c = 0.0; for (int i = 0; i < 3; i++) { q += vec2(sin(q.y * 1.7 + t * 0.6 + float(i)), cos(q.x * 1.5 - t * 0.5 + float(i) * 1.3)); c += abs(sin(q.x + q.y)); } return pow(max(0.0, 1.0 - c / 3.0), 3.0); }`;
+function patchUnder(m) {
+  patchFog(m);
+  const prev = m.onBeforeCompile;
+  m.onBeforeCompile = (sh) => {
+    prev(sh);
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", "#include <common>\n" + CAUSTIC_GLSL)
+      .replace("{\n  vec3 toP = vFogWorld - cameraPosition;", "gl_FragColor.rgb += vec3(0.55, 0.85, 0.9) * dkCaus(vFogWorld.xz, uTime) * 0.55 * smoothstep(-40.0, -4.0, vFogWorld.y) * uUnder;\n{\n  vec3 toP = vFogWorld - cameraPosition;");
+  };
+  m.customProgramCacheKey = () => "dkunder";
+  return m;
+}
+{
+  const g = new THREE.PlaneGeometry(760, 760, 150, 150).rotateX(-Math.PI / 2);
+  const P = g.attributes.position, cols = new Float32Array(P.count * 3), c = new THREE.Color(), r = rng(55);
+  const sand = new THREE.Color("#9a9370"), rock = new THREE.Color("#4f5149");
+  for (let i = 0; i < P.count; i++) {
+    const x = P.getX(i) + DOK.x, z = P.getZ(i) + DOK.z; P.setY(i, floorY(x, z));
+    c.lerpColors(sand, rock, smooth(0.3, 0.8, Math.sin(x * 0.07) * Math.cos(z * 0.06) * 0.5 + 0.5 + (r() - 0.5) * 0.3));
+    cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b;
+  }
+  g.setAttribute("color", new THREE.BufferAttribute(cols, 3)); g.computeVertexNormals();
+  const floor = new THREE.Mesh(g, patchUnder(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 })));
+  floor.position.set(DOK.x, 0, DOK.z); under.add(floor);
+}
+
+// 바닷속 생물 배치 위치
+const SEA_SPOTS = SEA.map((c, k) => {
+  const u = 0.06 + (k / SEA.length) * 0.9 + 0.04;
+  const P = new THREE.Vector3(), T = new THREE.Vector3(), Sd = new THREE.Vector3(); pathFrame(u, P, T, Sd);
+  const toC = new THREE.Vector3(DOK.x - P.x, 0, DOK.z - P.z).normalize(), side = Sd.dot(toC) > 0 ? 1 : -1;
+  let pos = null;
+  for (const off of [8, 5, 2, -2, -5]) {
+    const x = P.x + Sd.x * side * off, z = P.z + Sd.z * side * off, gy = groundY(x, z);
+    if (gy < P.y - 3 && gy > P.y - 11) { pos = new THREE.Vector3(x, gy, z); break; }
+  }
+  if (!pos) pos = new THREE.Vector3(P.x + Sd.x * side * 4, Math.max(groundY(P.x, P.z), P.y - 8), P.z + Sd.z * side * 4);
+  return { ...c, u, pos, group: new THREE.Group(), found: false, glow: null };
+});
+
+// 해조류 숲 (인스턴스)
+const kelpMat = new THREE.ShaderMaterial({
+  uniforms: U, side: THREE.DoubleSide,
+  vertexShader: `uniform float uTime; varying float vH; varying vec3 vW; varying float vTone;
+    void main(){ vec3 p = position; float id = float(gl_InstanceID);
+      float ph = fract(sin(id * 12.9898) * 43758.5453) * 6.28;
+      p.x += sin(uTime * 1.2 + ph + p.y * 0.25) * p.y * 0.06; p.z += cos(uTime * 0.9 + ph + p.y * 0.2) * p.y * 0.04;
+      vH = uv.y; vTone = fract(ph * 7.1);
+      vec4 w = modelMatrix * instanceMatrix * vec4(p, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+  fragmentShader: SKY_GLSL + `varying float vH; varying vec3 vW; varying float vTone;
+    void main(){ vec3 base = mix(vec3(0.03, 0.05, 0.02), vec3(0.17, 0.2, 0.05), vH) * (0.75 + 0.5 * vTone);
+      base += vec3(0.08, 0.12, 0.03) * pow(vH, 3.0) * smoothstep(-20.0, -4.0, vW.y);
+      base *= 0.55 + 0.6 * smoothstep(-30.0, -3.0, vW.y);
+      float d = length(vW - cameraPosition); float uf = 1.0 - exp(-d * 0.026);
+      vec3 uc = uUnderCol * (0.35 + 0.65 * smoothstep(-34.0, 0.0, vW.y));
+      gl_FragColor = vec4(mix(base, uc, uf), 1.0);
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+    }`,
+});
+{
+  const blade = new THREE.PlaneGeometry(1.1, 1, 1, 10); blade.translate(0, 0.5, 0);
+  const urchinPos = SEA_SPOTS.find((s) => s.id === "urchin").pos;
+  const r = rng(71), mats = [], m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3();
+  const centers = [];
+  for (let k = 0; k < 26; k++) { const P = new THREE.Vector3(), T = new THREE.Vector3(), Sd = new THREE.Vector3(); pathFrame(k / 26 + r() * 0.02, P, T, Sd); const side = r() < 0.5 ? -1 : 1, off = 6 + r() * 14; centers.push(new THREE.Vector3(P.x + Sd.x * side * off, 0, P.z + Sd.z * side * off)); }
+  centers.push(SEA_SPOTS.find((s) => s.id === "kelp").pos.clone());
+  for (const c of centers) {
+    const n = c === centers[centers.length - 1] ? 40 : 14;
+    for (let i = 0; i < n; i++) {
+      const x = c.x + (r() - 0.5) * 12, z = c.z + (r() - 0.5) * 12;
+      if (Math.hypot(x - urchinPos.x, z - urchinPos.z) < 13) continue;
+      const y = groundY(x, z); if (y > -4) continue;
+      ps.set(x, y, z); q.setFromAxisAngle(UP, r() * Math.PI * 2); const h = 5 + r() * 10; sc.set(0.8 + r() * 0.6, h, 1);
+      m4.compose(ps, q, sc); mats.push(m4.clone());
+    }
+  }
+  const kelp = new THREE.InstancedMesh(blade, kelpMat, mats.length); mats.forEach((m, i) => kelp.setMatrixAt(i, m)); kelp.frustumCulled = false; under.add(kelp);
+}
+// 바위
+{
+  const r = rng(73), rg = new THREE.IcosahedronGeometry(1, 1), rp = rg.attributes.position;
+  for (let i = 0; i < rp.count; i++) { const f = 0.8 + r() * 0.4; rp.setXYZ(i, rp.getX(i) * f, rp.getY(i) * f, rp.getZ(i) * f); }
+  rg.computeVertexNormals();
+  const rm = patchUnder(new THREE.MeshStandardMaterial({ color: "#56584f", roughness: 1, flatShading: true }));
+  for (let k = 0; k < 70; k++) {
+    const P = new THREE.Vector3(), T = new THREE.Vector3(), Sd = new THREE.Vector3(); pathFrame(r(), P, T, Sd);
+    const side = r() < 0.5 ? -1 : 1, off = 5 + r() * 16, x = P.x + Sd.x * side * off, z = P.z + Sd.z * side * off;
+    const m = new THREE.Mesh(rg, rm); const s = 1 + r() * 3.5; m.scale.set(s * (1 + r()), s * (0.5 + r() * 0.6), s); m.position.set(x, groundY(x, z) + s * 0.2, z); m.rotation.y = r() * 6; under.add(m);
+  }
+}
+
+// 생물 모형
+function shrimpModel(color, stripe) {
+  const g = new THREE.Group(), body = mat(color, { flatShading: false, roughness: 0.5 });
+  for (let i = 0; i < 6; i++) { const seg = new THREE.Mesh(new THREE.SphereGeometry(0.28 - i * 0.03, 10, 8), body); seg.position.set(0, Math.sin(i * 0.5) * 0.12, -i * 0.3); seg.scale.set(1, 0.85, 1.25); g.add(seg); if (stripe && i % 2) { const s = new THREE.Mesh(new THREE.TorusGeometry(0.25 - i * 0.03, 0.025, 6, 16), mat("#f6efe6", { flatShading: false })); s.position.copy(seg.position); g.add(s); } }
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.5, 6), body); tail.rotation.x = Math.PI / 2; tail.scale.set(1, 1, 0.3); tail.position.set(0, 0.25, -1.95); g.add(tail);
+  for (const s of [1, -1]) { const a = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 2.6, 4), body); a.rotation.set(-1.2, 0, s * 0.35); a.position.set(s * 0.15, 0.25, 1.1); g.add(a); }
+  for (let i = 0; i < 4; i++) for (const s of [1, -1]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.015, 0.5, 4), body); l.position.set(s * 0.2, -0.25, -0.2 - i * 0.22); l.rotation.z = s * 0.5; g.add(l); }
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), mat("#111")); eye.position.set(0.14, 0.18, 0.3); g.add(eye); const eye2 = eye.clone(); eye2.position.x = -0.14; g.add(eye2);
+  return g;
+}
+function buildCreature(s) {
+  const g = s.group, p = s.pos;
+  if (s.id === "kelp") {
+    // 바다 숲은 해조류 인스턴스로 이미 그렸다 → 반짝이는 표시만
+  } else if (s.id === "shrimp") {
+    const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(2, 1), patchUnder(new THREE.MeshStandardMaterial({ color: "#5d5a50", flatShading: true, roughness: 1 }))); rock.scale.set(1.4, 0.6, 1.1); g.add(rock);
+    [["#d8443a", true], ["#e2763f", false], ["#c93a46", true]].forEach(([c, st], i) => { const sh = shrimpModel(c, st); sh.position.set(-1.4 + i * 1.4, 1.3 + i * 0.1, 0.3 - i * 0.4); sh.rotation.y = 0.6 - i * 0.7; sh.scale.setScalar(1.1); g.add(sh); });
+  } else if (s.id === "abalone") {
+    const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(2.2, 1), patchUnder(new THREE.MeshStandardMaterial({ color: "#5a5d55", flatShading: true, roughness: 1 }))); rock.scale.set(1.3, 0.7, 1.2); g.add(rock);
+    for (let i = 0; i < 2; i++) {
+      const sh = new THREE.Group();
+      const shell = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), mat("#7c6a4a", { flatShading: false, roughness: 0.6 })); shell.scale.set(1.0, 0.32, 0.72); sh.add(shell);
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.86, 0.08, 6, 24), mat("#3e5a3a", { flatShading: false })); rim.rotation.x = Math.PI / 2; rim.scale.set(1.15, 0.84, 1); sh.add(rim);
+      for (let k = 0; k < 5; k++) { const h = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 6), mat("#1d1a14")); h.position.set(-0.55 + k * 0.22, 0.27 - Math.abs(k - 2) * 0.03, 0.35); sh.add(h); }
+      sh.position.set(-0.9 + i * 1.8, 1.45, i * 0.5); sh.rotation.set(0.15, i * 1.2, 0.1); g.add(sh);
+    }
+  } else if (s.id === "cucumber") {
+    for (let i = 0; i < 2; i++) {
+      const c = new THREE.Group(), m = mat(i ? "#6b2f25" : "#4e2a24", { flatShading: false, roughness: 0.8 });
+      const b = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 1.8, 6, 12), m); b.rotation.z = Math.PI / 2; c.add(b);
+      for (let k = 0; k < 18; k++) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.3, 5), m); const a = (k % 3) * 0.7 - 0.7; sp.position.set(-1 + (k / 18) * 2, 0.35 * Math.cos(a), 0.35 * Math.sin(a)); sp.rotation.x = a; c.add(sp); }
+      c.position.set(i * 2.2 - 1, 0.45, i * 1.2); c.rotation.y = i * 0.8; g.add(c);
+    }
+  } else if (s.id === "fish") {
+    const f = new THREE.Group(), body = mat("#c95560", { flatShading: false, roughness: 0.45 });
+    const b = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14), body); b.scale.set(0.55, 0.85, 1.7); f.add(b);
+    const bump = new THREE.Mesh(new THREE.SphereGeometry(0.55, 14, 10), body); bump.position.set(0, 0.55, 1.05); f.add(bump);
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.75, 1.0, 4), body); tail.rotation.x = -Math.PI / 2; tail.scale.set(0.2, 1, 1); tail.position.z = -1.9; f.add(tail);
+    const fin = new THREE.Mesh(new THREE.ConeGeometry(0.5, 1.6, 3), mat("#a83f4c", { flatShading: false })); fin.rotation.x = -Math.PI / 2.4; fin.scale.set(0.15, 1, 0.6); fin.position.set(0, 0.8, -0.2); f.add(fin);
+    for (const sx of [1, -1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8), mat("#f5f1e8")); e.position.set(sx * 0.42, 0.3, 1.2); f.add(e); const pu = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 6), mat("#111")); pu.position.set(sx * 0.5, 0.3, 1.25); f.add(pu); }
+    const lip = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), mat("#e8d8c8", { flatShading: false })); lip.position.set(0, -0.1, 1.62); f.add(lip);
+    f.scale.setScalar(1.3); g.add(f); s.fishModel = f;
+    const cave = new THREE.Mesh(new THREE.TorusGeometry(4, 1.6, 6, 10, Math.PI), patchUnder(new THREE.MeshStandardMaterial({ color: "#4f4c45", flatShading: true, roughness: 1 }))); cave.position.set(0, -0.5, -3); g.add(cave);
+  } else if (s.id === "urchin") {
+    const white = patchUnder(new THREE.MeshStandardMaterial({ color: "#d8d4c6", flatShading: true, roughness: 1 }));
+    const r = rng(97);
+    for (let i = 0; i < 6; i++) { const rk = new THREE.Mesh(new THREE.IcosahedronGeometry(1.6 + r() * 1.4, 1), white); rk.scale.y = 0.45; rk.position.set((r() - 0.5) * 9, 0, (r() - 0.5) * 9); g.add(rk); }
+    const um = mat("#2c1f3a", { flatShading: false, roughness: 0.5 });
+    for (let i = 0; i < 9; i++) {
+      const u = new THREE.Group(); u.add(new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 8), um));
+      for (let k = 0; k < 34; k++) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.9, 4), um); const a = r() * Math.PI * 2, e = r() * Math.PI * 0.55; sp.position.set(Math.cos(a) * Math.sin(e) * 0.5, Math.cos(e) * 0.5, Math.sin(a) * Math.sin(e) * 0.5); sp.lookAt(sp.position.clone().multiplyScalar(3)); sp.rotateX(Math.PI / 2); u.add(sp); }
+      u.position.set((r() - 0.5) * 8, 0.6, (r() - 0.5) * 8); g.add(u);
+    }
+  }
+  g.position.copy(p); under.add(g);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: "#9ff3ff", transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  glow.position.set(p.x, p.y + 3.5, p.z); glow.scale.set(6, 6, 1); under.add(glow); s.glow = glow;
+}
+SEA_SPOTS.forEach(buildCreature);
+
+// 물고기 떼
+const SCHOOL_N = 70;
+const school = new THREE.InstancedMesh(new THREE.ConeGeometry(0.2, 0.9, 5).rotateX(Math.PI / 2).scale(0.6, 1, 1), patchUnder(new THREE.MeshStandardMaterial({ color: "#5d7f93", roughness: 0.45, metalness: 0.2 })), SCHOOL_N);
+school.frustumCulled = false; under.add(school);
+const schoolSeed = Array.from({ length: SCHOOL_N }, () => [Math.random() * 6.28, 2 + Math.random() * 5, Math.random() * 6.28, Math.random() * 3 - 1.5]);
+// 바다 눈(떠다니는 입자)
+const SNOW_N = 700;
+const snow = (() => {
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(SNOW_N * 3); for (let i = 0; i < SNOW_N * 3; i++) pos[i] = Math.random();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  const m = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: { uTime: U.uTime, uCam: { value: new THREE.Vector3() }, uScale: { value: 400 } },
+    vertexShader: `uniform float uTime; uniform vec3 uCam; uniform float uScale; void main(){ vec3 p = position * 50.0 - 25.0; p.y += -uTime * 0.4; p.x += sin(uTime * 0.3 + position.z * 20.0) * 0.6; p = mod(p - uCam + 25.0, 50.0) - 25.0 + uCam; vec4 mv = viewMatrix * vec4(p, 1.0); gl_PointSize = 0.12 * uScale / -mv.z; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard; gl_FragColor = vec4(0.85, 0.95, 1.0, 0.45 * (1.0 - d * 2.0)); }` });
+  const p = new THREE.Points(g, m); p.frustumCulled = false; under.add(p); return p;
+})();
+// 빛줄기
+const rays = [];
+{
+  const rm = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, uniforms: { uTime: U.uTime },
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `uniform float uTime; varying vec2 vUv; void main(){ float a = pow(vUv.y, 2.2) * (1.0 - abs(vUv.x - 0.5) * 2.0) * 0.07; gl_FragColor = vec4(0.75, 0.95, 1.0, a); }` });
+  for (let i = 0; i < 16; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(4 + Math.random() * 5, 46).translate(0, -23, 0), rm); const ra = Math.random() * Math.PI * 2, rr = 22 + Math.random() * 40; m.userData.o = [Math.cos(ra) * rr, Math.sin(ra) * rr, Math.random() * 6]; under.add(m); rays.push(m); }
+}
+// 잠수부(탐험대원)
+const diver = new THREE.Group();
+{
+  const suit = mat("#20375e", { flatShading: false, roughness: 0.6 }), orange = mat("#ef6a1e", { flatShading: false }), skin = mat("#f1c9a5", { flatShading: false }), yellow = mat("#f2c230", { flatShading: false });
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.3, 0.8, 6, 12), suit); body.rotation.x = Math.PI / 2; diver.add(body);
+  const vest = new THREE.Mesh(new THREE.CapsuleGeometry(0.33, 0.35, 6, 12), orange); vest.rotation.x = Math.PI / 2; vest.position.z = 0.2; diver.add(vest);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 14, 10), skin); head.position.set(0, 0.05, 0.85); diver.add(head);
+  const hood = new THREE.Mesh(new THREE.SphereGeometry(0.26, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.6), suit); hood.position.copy(head.position); hood.rotation.x = -0.6; diver.add(hood);
+  const mask = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, 0.1), new THREE.MeshStandardMaterial({ color: "#7fd6ea", emissive: "#2a6e7e", roughness: 0.1 })); mask.position.set(0, 0.0, 1.07); diver.add(mask);
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.06), yellow); frame.position.set(0, 0, 1.03); diver.add(frame);
+  const tank = new THREE.Mesh(new THREE.CapsuleGeometry(0.14, 0.55, 4, 10), yellow); tank.rotation.x = Math.PI / 2; tank.position.set(0, 0.32, 0.1); diver.add(tank);
+  const legs = [];
+  for (const sx of [1, -1]) {
+    const leg = new THREE.Group(); leg.position.set(sx * 0.14, 0, -0.55); diver.add(leg);
+    const l = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.55, 4, 8), suit); l.rotation.x = Math.PI / 2; l.position.z = -0.35; leg.add(l);
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.04, 0.6), yellow); fin.position.z = -0.85; leg.add(fin);
+    legs.push(leg);
+    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.5, 4, 8), suit); arm.rotation.set(Math.PI / 2, 0, 0); arm.position.set(sx * 0.36, -0.05, 0.35); diver.add(arm);
+  }
+  diver.userData.legs = legs; diver.scale.setScalar(1.4); under.add(diver);
+}
+// 거품
+const BUB_N = 90;
+const bubbles = (() => {
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(BUB_N * 3), life = new Float32Array(BUB_N).fill(1);
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3)); g.setAttribute("aLife", new THREE.BufferAttribute(life, 1));
+  const m = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: { uScale: { value: 400 } },
+    vertexShader: `attribute float aLife; uniform float uScale; varying float vL; void main(){ vL = aLife; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = (0.15 + aLife * 0.25) * uScale / -mv.z; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `varying float vL; void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5 || vL >= 1.0) discard; float ring = smoothstep(0.5, 0.38, d) - smoothstep(0.32, 0.1, d) * 0.6; gl_FragColor = vec4(0.85, 0.97, 1.0, ring * (1.0 - vL) * 0.9); }` });
+  const p = new THREE.Points(g, m); p.frustumCulled = false; under.add(p); return { p, pos, life, i: 0 };
+})();
+// 강치의 기억
+const ghost = new THREE.Group();
+{
+  const gm = new THREE.MeshBasicMaterial({ color: "#bfefff", transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false });
+  const b = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12), gm); b.scale.set(0.8, 0.7, 2.2); ghost.add(b);
+  const h = new THREE.Mesh(new THREE.SphereGeometry(0.55, 14, 10), gm); h.position.set(0, 0.25, 2.2); ghost.add(h);
+  const sn = new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 8), gm); sn.position.set(0, 0.1, 2.7); ghost.add(sn);
+  for (const sx of [1, -1]) { const f = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 0.5), gm); f.position.set(sx * 0.9, -0.2, 0.9); f.rotation.z = sx * -0.4; ghost.add(f); const t = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.06, 0.9), gm); t.position.set(sx * 0.3, -0.1, -2.3); t.rotation.y = sx * 0.4; ghost.add(t); }
+  ghost.scale.setScalar(1.6); ghost.visible = false; under.add(ghost);
+}
+
+/* 잠수 화면 요소 */
+const diveHud = $("#diveHud"), diveTouch = $("#diveTouch"), diveHint = $("#diveHint");
+$("#seaIcons").innerHTML = SEA.map((c) => `<i data-id="${c.id}" title="${c.year}">${SEA_ICON[c.id]}</i>`).join("");
+const mkSea = document.createElement("div"); mkSea.className = "mk bot sea"; mkSea.innerHTML = '<div class="lbl">반짝이는 무언가<b></b></div><div class="dia"></div>'; ui.markers.appendChild(mkSea);
+function updateSeaUI() {
+  const n = S.sea.size;
+  $("#seaCount").textContent = `${n} / ${SEA.length}`;
+  $("#diveBtnCount").textContent = `${n}/${SEA.length}`;
+  document.querySelectorAll("#seaIcons i").forEach((el) => el.classList.toggle("on", S.sea.has(el.dataset.id)));
+  $("#diveBtn").classList.toggle("done", n === SEA.length);
+}
+let savedLight = null;
+function setUnder(on) {
+  U.uUnder.value = on ? 1 : 0;
+  under.visible = on; water.visible = !on; flash.visible = !on; ullLights.visible = !on;
+  for (const b of birds) b.g.visible = !on && !b.follow;
+  Snd.setUnder(on);
+  camera.clearViewOffset(); orbit.shift = 0;
+  if (on) {
+    hemi.color.set("#7fd0dc"); hemi.groundColor.set("#0d3340"); hemi.intensity = 1.25;
+    sunLight.color.set("#d8f4ff"); sunLight.intensity = 1.4; renderer.toneMappingExposure = 1.15;
+  } else setSun(sunE);
+}
+async function enterDive() {
+  if (S.state !== "explore") return;
+  closeSpot(); Snd.splash();
+  ui.explore.classList.add("out");
+  await fadeTo(true);
+  setUnder(true);
+  S.state = "dive";
+  pathFrame(DIVE.u, _P, _T, _S);
+  camera.position.copy(_P).addScaledVector(_T, -8).add(new THREE.Vector3(0, 3, 0)); camLook.copy(_P);
+  diveHud.hidden = false; requestAnimationFrame(() => diveHud.classList.remove("out"));
+  diveHint.hidden = false; diveHint.classList.remove("out"); setTimeout(() => diveHint.classList.add("out"), 9000);
+  if (coarse) diveTouch.hidden = false;
+  updateSeaUI();
+  await fadeTo(false);
+  if (DIVE.first) { DIVE.first = false; caption('<div class="c-kick">독도 바닷속 · 수심 18m</div><div class="c-big">바닷속 탐사 시작!</div><div class="c-small">반짝이는 곳을 찾아 헤엄쳐 가 보세요. 독도 바다에 사는 생물들을 만날 수 있어요.</div>', 5200); }
+}
+async function exitDive() {
+  if (!(S.state === "dive" || S.state === "diveEnd")) return;
+  Snd.splash();
+  await fadeTo(true);
+  setUnder(false);
+  ghost.visible = false; mkSea.style.opacity = 0;
+  diveHud.classList.add("out"); diveHud.hidden = true; diveTouch.hidden = true; diveHint.hidden = true;
+  S.state = "explore"; show(ui.explore, true);
+  orbit.tween = null; orbit.target.copy(EXP.target); orbit.r = EXP.r; orbit.phi = EXP.phi; orbit.theta = EXP.theta + 0.3;
+  await fadeTo(false);
+  checkAllDone();
+  if (checkAllDone()) toast("바닷속 도감까지 모두 채웠어요! ‘마지막 관문’ 버튼을 눌러요.", 4200);
+  else if (S.sea.size < SEA.length) toast(`바닷속 도감 ${S.sea.size} / ${SEA.length} · 다시 잠수해서 마저 찾아봐요!`, 3400);
+}
+function collectSea(s) {
+  s.found = true; s.glow.visible = false; S.sea.add(s.id); updateSeaUI();
+  Snd.chime(); S.state = "diveCard";
+  setTimeout(() => openNote(s, { n: S.sea.size, total: SEA.length, next: S.sea.size === SEA.length ? "계속하기" : "계속 헤엄치기", onDone: () => {
+    if (S.sea.size === SEA.length && !DIVE.done) { DIVE.done = true; DIVE.ghostT = 0; S.state = "diveEnd"; ghost.visible = true; Snd.swell();
+      caption('<div class="c-kick">강치의 기억</div><div class="c-big">언젠가 다시, 강치가 돌아올 수 있도록</div><div class="c-small">옛날 독도 바다를 누비던 강치는 이제 볼 수 없어요. 독도의 바다를 깨끗하게 지키는 것도 독도 지킴이의 일이에요.</div>', 7600);
+      setTimeout(() => { $("#surfaceBtn").classList.add("glow"); }, 3000);
+    } else S.state = "dive";
+  } }), 500);
+}
+const _dv = new THREE.Vector3(), _look = new THREE.Vector3();
+function updateDive(dt, active) {
+  // 바닷속 장식은 언제나 움직인다
+  underside.position.set(camera.position.x, 0.4, camera.position.z);
+  snow.material.uniforms.uCam.value.copy(camera.position);
+  for (const r of rays) { const o = r.userData.o; r.position.set(camera.position.x + o[0] + Math.sin(S.time * 0.2 + o[2]) * 3, 0, camera.position.z + o[1]); r.rotation.y = Math.atan2(camera.position.x - r.position.x, camera.position.z - r.position.z); }
+  const fishSpot = SEA_SPOTS.find((s) => s.id === "fish");
+  if (fishSpot.fishModel) { const a = S.time * 0.5; fishSpot.fishModel.position.set(Math.cos(a) * 4, 2.2 + Math.sin(S.time) * 0.3, Math.sin(a) * 4); fishSpot.fishModel.rotation.y = -a; }
+  for (const s of SEA_SPOTS) if (!s.found) { const k = 5 + Math.sin(S.time * 3 + s.u * 20) * 1.2; s.glow.scale.set(k, k, 1); }
+  // 물고기 떼: 잠수부 앞쪽에서 돈다
+  pathFrame(DIVE.u + 18 / PATH_LEN, _P, _T, _S);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(1, 1, 1), ps = new THREE.Vector3();
+  for (let i = 0; i < SCHOOL_N; i++) {
+    const [ph, rad, ph2, dy] = schoolSeed[i], a = S.time * 0.8 + ph;
+    ps.set(_P.x + _S.x * 6 + Math.cos(a) * rad, _P.y + 2 + dy + Math.sin(S.time * 1.3 + ph2) * 0.6, _P.z + _S.z * 6 + Math.sin(a) * rad);
+    q.setFromAxisAngle(UP, -a); m4.compose(ps, q, sc); school.setMatrixAt(i, m4);
+  }
+  school.instanceMatrix.needsUpdate = true;
+  // 잠수부 이동
+  const k = DIVE.keys, tx = clamp(k.l - k.r + DIVE.touch.x, -1, 1), ty = clamp(k.u - k.d + DIVE.touch.y, -1, 1);
+  const moving = active && S.state === "dive";
+  if (moving) {
+    DIVE.u += (DIVE.speed * dt) / PATH_LEN;
+    DIVE.ox = clamp(DIVE.ox + tx * 10 * dt, -13, 13);
+    DIVE.oy = clamp(DIVE.oy + ty * 8 * dt, -13, 6);
+  }
+  pathFrame(DIVE.u, _P, _T, _S);
+  _dv.copy(_P).addScaledVector(_S, -DIVE.ox); _dv.y += DIVE.oy;
+  const gy = groundY(_dv.x, _dv.z); if (_dv.y < gy + 1.4) { _dv.y = gy + 1.4; DIVE.oy = _dv.y - _P.y; }
+  if (_dv.y > -2.5) { _dv.y = -2.5; DIVE.oy = _dv.y - _P.y; }
+  // 가까운 생물 쪽으로 살짝 끌어 준다
+  let next = null, nd = Infinity;
+  for (const s of SEA_SPOTS) { if (s.found) continue; const d = s.pos.distanceTo(_dv); const ahead = ((s.u - (DIVE.u % 1)) + 1) % 1; if (ahead < 0.25 && d < nd) { nd = d; next = s; } }
+  if (moving && next && nd < 16) {
+    const want = next.pos.clone(); want.y += 1.2;
+    const lateral = -(want.clone().sub(_P).dot(_S)), vert = want.y - _P.y;
+    DIVE.ox = damp(DIVE.ox, clamp(lateral, -13, 13), 0.9, dt); DIVE.oy = damp(DIVE.oy, clamp(vert, -13, 6), 0.9, dt);
+  }
+  diver.position.copy(_dv);
+  _look.copy(_dv).add(_T); diver.lookAt(_look);
+  diver.rotation.z += -tx * 0.25;
+  const kick = Math.sin(S.time * 6) * 0.35; diver.userData.legs[0].rotation.x = kick; diver.userData.legs[1].rotation.x = -kick;
+  if (moving) for (const s of SEA_SPOTS) if (!s.found && s.pos.distanceTo(_dv) < 6.5) { collectSea(s); break; }
+  // 강치 장면
+  if (S.state === "diveEnd") {
+    DIVE.ghostT += dt; const a = DIVE.ghostT * 0.7;
+    ghost.position.set(_dv.x + Math.cos(a) * 9, _dv.y + 2 + Math.sin(a * 2) * 1.5, _dv.z + Math.sin(a) * 9);
+    ghost.lookAt(_dv.x + Math.cos(a + 0.3) * 9, ghost.position.y, _dv.z + Math.sin(a + 0.3) * 9);
+    ghost.children.forEach((c) => (c.material.opacity = 0.45 * Math.min(1, DIVE.ghostT / 2)));
+  }
+  // 카메라
+  const camT = _dv.clone().addScaledVector(_T, -8.5).add(new THREE.Vector3(0, 2.6, 0)).addScaledVector(_S, -1.6);
+  camera.position.lerp(camT, 1 - Math.exp(-3 * dt));
+  camLook.lerp(_dv.clone().addScaledVector(_T, 5), 1 - Math.exp(-4 * dt));
+  camera.lookAt(camLook);
+  camera.fov = damp(camera.fov, 58, 2, dt); camera.updateProjectionMatrix();
+  // 거품
+  DIVE.bubbleT += dt;
+  if (DIVE.bubbleT > 0.12) { DIVE.bubbleT = 0; const i = bubbles.i; bubbles.i = (i + 1) % BUB_N; _look.set(0, 0.2, 0.9).applyMatrix4(diver.matrixWorld); bubbles.pos[i * 3] = _look.x; bubbles.pos[i * 3 + 1] = _look.y; bubbles.pos[i * 3 + 2] = _look.z; bubbles.life[i] = 0; }
+  for (let i = 0; i < BUB_N; i++) { if (bubbles.life[i] >= 1) continue; bubbles.life[i] = Math.min(1, bubbles.life[i] + dt / 2.4); bubbles.pos[i * 3 + 1] += dt * 3; bubbles.pos[i * 3] += Math.sin(S.time * 5 + i) * dt * 0.4; }
+  bubbles.p.geometry.attributes.position.needsUpdate = true; bubbles.p.geometry.attributes.aLife.needsUpdate = true;
+  DIVE.sndT -= dt; if (DIVE.sndT <= 0) { Snd.bubble(); setTimeout(() => Snd.bubble(), 90); DIVE.sndT = 2 + Math.random() * 2; }
+  // 계기
+  $("#depthVal").innerHTML = Math.round(-_dv.y * 1.8) + "<small>m</small>";
+  if (S.state === "dive" && next) {
+    const p = project(_v.copy(next.pos).add(new THREE.Vector3(0, 4, 0)));
+    mkSea.style.opacity = p.ok ? 1 : 0;
+    if (p.ok) { mkSea.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -100%)`; mkSea.querySelector("b").textContent = Math.round(nd * 1.8) + "m"; }
+  } else mkSea.style.opacity = 0;
+}
+function checkAllDone() {
+  const ready = S.spots.size === SPOTS.length && S.sea.size === SEA.length;
+  $("#finishBtn").hidden = !ready;
+  return ready;
 }
 
 /* ---------- 임명장 ---------- */
@@ -1910,8 +2598,8 @@ function openFinale() {
       <div class="c-no">${no}</div>
       <h2 id="certTitle">임명장</h2>
       <div class="name-row"><label for="certName">이름</label><input id="certName" value="" placeholder="이름을 써 주세요" maxlength="10" autocomplete="off"></div>
-      <p>위 사람은 독도의 날을 맞아 울릉도에서 독도까지 87.4km의 새벽 바다를 건너, 유리병 속 열두 기록으로 독도의 역사와 자연을 배우고 독도 구석구석 여덟 곳을 탐사하였기에 <b>독도 지킴이</b>로 임명합니다.</p>
-      <div class="stats"><span><b>${S.collected} / ${NREC}</b>유리병 기록</span><span><b>${S.stars} / ${NREC}</b>퀴즈 정답</span><span><b>${S.spots.size} / ${SPOTS.length}</b>독도 도감</span></div>
+      <p>위 사람은 독도의 날을 맞아 울릉도에서 독도까지 87.4km의 새벽 바다를 건너, 유리병 속 열두 기록으로 독도의 역사와 자연을 배우고 독도 구석구석 여덟 곳과 바닷속까지 탐사하였기에 <b>독도 지킴이</b>로 임명합니다.</p>
+      <div class="stats"><span><b>${S.collected} / ${NREC}</b>유리병 기록</span><span><b>${S.stars} / ${S.quizzes}</b>퀴즈 정답</span><span><b>${S.spots.size} / ${SPOTS.length}</b>독도 도감</span><span><b>${S.sea.size} / ${SEA.length}</b>바닷속 도감</span></div>
       <div class="sign"><span>${date}</span><span>독도 원정대</span><span class="seal" aria-hidden="true">독도<br>지킴</span></div>
       <div class="acts"><button class="btn ghost" id="backExplore" type="button">독도 더 둘러보기</button><button class="btn" id="again" type="button">처음부터 다시</button></div>
       <div class="tip">이름을 쓰고 화면을 캡처하면 임명장을 간직할 수 있어요. · <button class="credit-link dark" id="creditBtn2" type="button">사진·영상 출처</button></div>
@@ -1925,12 +2613,14 @@ function openFinale() {
 
 /* ---------- 입력 ---------- */
 const keyMap = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right", Space: "boost", ArrowUp: "boost", KeyW: "boost" };
+const diveKey = { ArrowLeft: "l", KeyA: "l", ArrowRight: "r", KeyD: "r", ArrowUp: "u", KeyW: "u", ArrowDown: "d", KeyS: "d" };
 addEventListener("keydown", (e) => {
   if (e.target.tagName === "INPUT") return;
+  if (S.state === "dive" && diveKey[e.code]) { DIVE.keys[diveKey[e.code]] = 1; e.preventDefault(); return; }
   const k = keyMap[e.code]; if (!k) { if (e.code === "Escape" && S.focus) closeSpot(); return; }
   if (S.state === "voyage") { keys[k] = true; e.preventDefault(); }
 });
-addEventListener("keyup", (e) => { const k = keyMap[e.code]; if (k) keys[k] = false; });
+addEventListener("keyup", (e) => { const k = keyMap[e.code]; if (k) keys[k] = false; if (diveKey[e.code]) DIVE.keys[diveKey[e.code]] = 0; });
 addEventListener("blur", () => { keys.left = keys.right = keys.boost = false; });
 function hold(el, on, off) {
   el.addEventListener("pointerdown", (e) => { e.preventDefault(); el.setPointerCapture(e.pointerId); el.classList.add("held"); on(); });
@@ -1940,6 +2630,10 @@ function hold(el, on, off) {
 hold($("#tLeft"), () => (touchSteer = 1), () => (touchSteer = 0));
 hold($("#tRight"), () => (touchSteer = -1), () => (touchSteer = 0));
 hold($("#tBoost"), () => (touchBoost = true), () => (touchBoost = false));
+hold($("#dLeft"), () => (DIVE.touch.x = 1), () => (DIVE.touch.x = 0));
+hold($("#dRight"), () => (DIVE.touch.x = -1), () => (DIVE.touch.x = 0));
+hold($("#dUp"), () => (DIVE.touch.y = 1), () => (DIVE.touch.y = 0));
+hold($("#dDown"), () => (DIVE.touch.y = -1), () => (DIVE.touch.y = 0));
 
 const cv = renderer.domElement;
 cv.addEventListener("pointerdown", (e) => {
@@ -1953,7 +2647,7 @@ cv.addEventListener("pointermove", (e) => {
   const prev = orbit.pointers.get(e.pointerId); orbit.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (orbit.pointers.size === 2) {
     const [a, b] = [...orbit.pointers.values()], dd = Math.hypot(a.x - b.x, a.y - b.y);
-    if (orbit.pinch) orbit.r = clamp(orbit.r * (orbit.pinch / dd), 45, 420);
+    if (orbit.pinch) orbit.r = clamp(orbit.r * (orbit.pinch / dd), 45, 720);
     orbit.pinch = dd; return;
   }
   const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
@@ -1962,7 +2656,7 @@ cv.addEventListener("pointermove", (e) => {
 });
 const endPtr = (e) => { orbit.pointers.delete(e.pointerId); if (orbit.pointers.size < 2) orbit.pinch = 0; if (!orbit.pointers.size) orbit.drag = null; };
 cv.addEventListener("pointerup", endPtr); cv.addEventListener("pointercancel", endPtr);
-cv.addEventListener("wheel", (e) => { if (S.state !== "explore") return; e.preventDefault(); orbit.tween = null; orbit.r = clamp(orbit.r * (1 + e.deltaY * 0.0012), 45, 420); orbit.idle = 0; }, { passive: false });
+cv.addEventListener("wheel", (e) => { if (S.state !== "explore") return; e.preventDefault(); orbit.tween = null; orbit.r = clamp(orbit.r * (1 + e.deltaY * 0.0012), 45, 720); orbit.idle = 0; }, { passive: false });
 
 $("#startBtn").addEventListener("click", startVoyage);
 $("#creditBtn").addEventListener("click", openCredits);
@@ -1970,6 +2664,8 @@ $("#skipBtn").addEventListener("click", skipToExplore);
 $("#sheetClose").addEventListener("click", closeSpot);
 $("#resetView").addEventListener("click", resetView);
 $("#finishBtn").addEventListener("click", openVideo);
+$("#diveBtn").addEventListener("click", enterDive);
+$("#surfaceBtn").addEventListener("click", () => { $("#surfaceBtn").classList.remove("glow"); exitDive(); });
 $("#soundBtn").addEventListener("click", () => {
   Snd.toggle(); const b = $("#soundBtn");
   b.setAttribute("aria-pressed", String(Snd.on)); b.setAttribute("aria-label", Snd.on ? "소리 끄기" : "소리 켜기");
@@ -1980,9 +2676,11 @@ addEventListener("resize", () => {
   renderer.setSize(innerWidth, innerHeight);
   wake.p.material.uniforms.uScale.value = innerHeight * 0.55;
   smoke.p.material.uniforms.uScale.value = innerHeight * 0.55;
+  snow.material.uniforms.uScale.value = innerHeight * 0.55; bubbles.p.material.uniforms.uScale.value = innerHeight * 0.55;
 });
 wake.p.material.uniforms.uScale.value = innerHeight * 0.55;
 smoke.p.material.uniforms.uScale.value = innerHeight * 0.55;
+snow.material.uniforms.uScale.value = innerHeight * 0.55; bubbles.p.material.uniforms.uScale.value = innerHeight * 0.55;
 
 /* ---------- 메인 루프 ---------- */
 let last = performance.now(), perfAcc = 0, perfN = 0, perfDone = false;
@@ -2033,6 +2731,12 @@ function frame(now) {
       if (S.t > 8.2) startExplore(false);
       break;
     }
+    case "dive":
+    case "diveCard":
+    case "diveEnd":
+      placeBoat(dt);
+      updateDive(dt, true);
+      break;
     case "explore":
     case "finale":
       placeBoat(dt);
@@ -2060,6 +2764,7 @@ function frame(now) {
   updateBirds(S.time, dt);
   updateWake(dt);
   updateBoatParts(S.time, dt);
+  applyWeather(dt);
   animateFlags(S.time);
   updateMarkers();
 
@@ -2077,7 +2782,7 @@ setTimeout(async () => {
   await fadeTo(false);
 }, 400);
 
-window.__dokdo = { S, camera, boat, setSun, placeBoat, skipToExplore, startVoyage, openFinale, openSpot, collectSpot, startArrival, openRecord, openVideo };
+window.__dokdo = { THREE, scene, school, rays, ghost, under, S, STORM, STORM_Z, bottles, DIVE, SEA_SPOTS, enterDive, exitDive, camera, boat, setSun, placeBoat, skipToExplore, startVoyage, openFinale, openSpot, collectSpot, startArrival, openRecord, openVideo };
 </script>
 
 </body>
