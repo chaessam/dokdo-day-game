@@ -4,6 +4,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "dokdo-day-game",
   "compatibility_date": "2025-09-01",
+  // workers.dev 주소(dokdo-day-game.<계정>.workers.dev)를 켜 둔다
+  "workers_dev": true,
   "assets": {
     "directory": "."
   },
