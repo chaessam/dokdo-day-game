@@ -425,6 +425,31 @@ input:focus-visible {
     display: none;
   }
 }
+@media (max-height: 520px) {
+  .t-wrap {
+    gap: 10px;
+  }
+  .t-mark {
+    display: none;
+  }
+  .t-title {
+    font-size: 46px;
+  }
+  .t-lead {
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 48em;
+  }
+  .t-date strong {
+    font-size: 40px;
+  }
+  #title .maker {
+    padding: 5px 12px;
+  }
+  #title .maker-title b {
+    font-size: 18px;
+  }
+}
 #caption {
   position: fixed;
   left: 50%;
@@ -1822,6 +1847,76 @@ input:focus-visible {
   color: var(--hanji-dim);
   font-size: 13px;
 }
+.maker {
+  align-self: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(7, 16, 30, .55);
+}
+.maker-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.maker-title span {
+  font-size: 13px;
+  color: var(--dim);
+  letter-spacing: .08em;
+}
+.maker-title b {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--gold);
+}
+.maker-link {
+  font-size: 14px;
+  color: var(--teal);
+  text-decoration: none;
+  border-bottom: 1.5px solid rgba(132, 225, 214, .4);
+  padding-bottom: 1px;
+}
+.maker-link:hover,
+.maker-link:focus-visible {
+  color: var(--text);
+  border-bottom-color: var(--text);
+  outline: none;
+}
+.cert .maker {
+  align-self: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-top: 1px dashed rgba(42, 32, 24, .3);
+  border-radius: 0;
+  padding: 10px 6px 0;
+}
+.cert .maker-title span {
+  color: var(--hanji-dim);
+}
+.cert .maker-title b {
+  color: var(--hanji-ink);
+}
+.cert .maker-link {
+  color: #2d5f8a;
+  border-bottom-color: rgba(45, 95, 138, .4);
+}
+.cert .maker-link:hover,
+.cert .maker-link:focus-visible {
+  color: var(--hanji-ink);
+  border-bottom-color: var(--hanji-ink);
+}
+.credits .maker {
+  margin-top: 2px;
+}
+.no-flexgap .maker > * + * {
+  margin-left: 14px;
+}
 .credits {
   position: relative;
   width: 100%;
@@ -2132,6 +2227,8 @@ input:focus-visible {
       <span><b>03</b>독도 탐사 8곳</span>
       <span><b>30분</b>초등 3~6학년</span>
     </div>
+    <!-- 만든 사람 표시 -->
+    <div class="maker"><div class="maker-title"><span>기획·제작</span><b>채쌤</b></div><a class="maker-link" href="https://blog.naver.com/ai_classroom" target="_blank" rel="noopener">AI 수업 아카이브 · 채쌤 블로그 ↗</a></div>
   </div>
   <div class="t-date"><strong>10.25</strong><span>독도의 날</span></div>
 </section>
@@ -5502,10 +5599,11 @@ function boot() {
       resetView();
     });
   }
+  const MAKER_HTML = '<div class="maker"><div class="maker-title"><span>기획·제작</span><b>채쌤</b></div><a class="maker-link" href="https://blog.naver.com/ai_classroom" target="_blank" rel="noopener">AI 수업 아카이브 · 채쌤 블로그 ↗</a></div>';
   function openCredits() {
     const el = $("#credits");
     const url = "https://www.youtube.com/watch?v=".concat(VIDEO.id);
-    el.innerHTML = '\n    <article class="credits" role="dialog" aria-modal="true" aria-labelledby="crTitle">\n      <button class="icon-btn close" id="crClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>\n      <div class="kicker">출처</div>\n      <h2 id="crTitle">사진·영상 출처</h2>\n      <p class="cr-lead">이 게임의 실제 사진은 위키미디어 공용에서 자유 이용이 허락된 사진(CC 라이선스, 퍼블릭 도메인)과 공공누리 제1유형 사진이에요. 3D 장면은 직접 만든 그림이에요.</p>\n      <h3>영상</h3>\n      <ul><li><b>'.concat(VIDEO.title, "</b><span>").concat(VIDEO.channel, ' · YouTube</span><a href="').concat(url, '" target="_blank" rel="noopener">').concat(url, "</a></li></ul>\n      <h3>사진</h3>\n      <ul>").concat(Object.values(PHOTOS).map((p) => "<li><b>".concat(p.alt, "</b><span>").concat(p.credit, '</span><a href="').concat(p.link, '" target="_blank" rel="noopener">위키미디어 공용 원본 보기</a></li>')).join(""), "</ul>\n    </article>");
+    el.innerHTML = '\n    <article class="credits" role="dialog" aria-modal="true" aria-labelledby="crTitle">\n      <button class="icon-btn close" id="crClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>\n      <div class="kicker">출처</div>\n      <h2 id="crTitle">사진·영상 출처</h2>\n      '.concat(MAKER_HTML, '\n      <p class="cr-lead">이 게임의 실제 사진은 위키미디어 공용에서 자유 이용이 허락된 사진(CC 라이선스, 퍼블릭 도메인)과 공공누리 제1유형 사진이에요. 3D 장면은 직접 만든 그림이에요.</p>\n      <h3>영상</h3>\n      <ul><li><b>').concat(VIDEO.title, "</b><span>").concat(VIDEO.channel, ' · YouTube</span><a href="').concat(url, '" target="_blank" rel="noopener">').concat(url, "</a></li></ul>\n      <h3>사진</h3>\n      <ul>").concat(Object.values(PHOTOS).map((p) => "<li><b>".concat(p.alt, "</b><span>").concat(p.credit, '</span><a href="').concat(p.link, '" target="_blank" rel="noopener">위키미디어 공용 원본 보기</a></li>')).join(""), "</ul>\n    </article>");
     el.hidden = false;
     $("#crClose").addEventListener("click", () => el.hidden = true);
     el.addEventListener("click", (e) => {
@@ -5520,7 +5618,7 @@ function boot() {
     flyTo(EXP.target.clone().add(new THREE.Vector3(0, 10, 0)), 300, 1.25, orbit.theta + 0.6, 6);
     const d = /* @__PURE__ */ new Date(), date = "".concat(d.getFullYear(), "년 ").concat(d.getMonth() + 1, "월 ").concat(d.getDate(), "일");
     const no = "제 " + String(d.getFullYear()).slice(2) + "1025-" + String(Math.floor(Math.random() * 900) + 100) + " 호";
-    ui.finale.innerHTML = '\n    <article class="cert" role="dialog" aria-modal="true" aria-labelledby="certTitle">\n      <div class="c-no">'.concat(no, '</div>\n      <h2 id="certTitle">임명장</h2>\n      <div class="name-row"><label for="certName">이름</label><input id="certName" value="" placeholder="이름을 써 주세요" maxlength="10" autocomplete="off"></div>\n      <p>위 사람은 독도의 날을 맞아 울릉도에서 독도까지 87.4km의 새벽 바다를 건너, 유리병 속 열두 기록으로 독도의 역사와 자연을 배우고 독도 구석구석 여덟 곳과 바닷속까지 탐사하였기에 <b>독도 지킴이</b>로 임명합니다.</p>\n      <div class="stats"><span><b>').concat(S.collected, " / ").concat(NREC, "</b>유리병 기록</span><span><b>").concat(S.stars, " / ").concat(S.quizzes, "</b>퀴즈 정답</span><span><b>").concat(S.spots.size, " / ").concat(SPOTS.length, "</b>독도 도감</span><span><b>").concat(S.sea.size, " / ").concat(SEA.length, '</b>바닷속 도감</span></div>\n      <div class="sign"><span>').concat(date, '</span><span>독도 원정대</span><span class="seal" aria-hidden="true">독도<br>지킴</span></div>\n      <div class="acts"><button class="btn ghost" id="backExplore" type="button">독도 더 둘러보기</button><button class="btn" id="again" type="button">처음부터 다시</button></div>\n      <div class="tip">이름을 쓰고 화면을 캡처하면 임명장을 간직할 수 있어요. · <button class="credit-link dark" id="creditBtn2" type="button">사진·영상 출처</button></div>\n    </article>');
+    ui.finale.innerHTML = '\n    <article class="cert" role="dialog" aria-modal="true" aria-labelledby="certTitle">\n      <div class="c-no">'.concat(no, '</div>\n      <h2 id="certTitle">임명장</h2>\n      <div class="name-row"><label for="certName">이름</label><input id="certName" value="" placeholder="이름을 써 주세요" maxlength="10" autocomplete="off"></div>\n      <p>위 사람은 독도의 날을 맞아 울릉도에서 독도까지 87.4km의 새벽 바다를 건너, 유리병 속 열두 기록으로 독도의 역사와 자연을 배우고 독도 구석구석 여덟 곳과 바닷속까지 탐사하였기에 <b>독도 지킴이</b>로 임명합니다.</p>\n      <div class="stats"><span><b>').concat(S.collected, " / ").concat(NREC, "</b>유리병 기록</span><span><b>").concat(S.stars, " / ").concat(S.quizzes, "</b>퀴즈 정답</span><span><b>").concat(S.spots.size, " / ").concat(SPOTS.length, "</b>독도 도감</span><span><b>").concat(S.sea.size, " / ").concat(SEA.length, '</b>바닷속 도감</span></div>\n      <div class="sign"><span>').concat(date, '</span><span>독도 원정대</span><span class="seal" aria-hidden="true">독도<br>지킴</span></div>\n      <div class="acts"><button class="btn ghost" id="backExplore" type="button">독도 더 둘러보기</button><button class="btn" id="again" type="button">처음부터 다시</button></div>\n      <div class="tip">이름을 쓰고 화면을 캡처하면 임명장을 간직할 수 있어요. · <button class="credit-link dark" id="creditBtn2" type="button">사진·영상 출처</button></div>\n      ').concat(MAKER_HTML, "\n    </article>");
     ui.finale.hidden = false;
     $("#certName").focus();
     $("#backExplore").addEventListener("click", () => {

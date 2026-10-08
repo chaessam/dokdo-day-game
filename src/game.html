@@ -109,6 +109,16 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .t-date strong { display: block; font-size: clamp(40px, 6vw, 72px); font-weight: 800; line-height: 1; color: var(--gold); }
 .t-date span { font-size: 15px; letter-spacing: .1em; }
 @media (max-width: 760px) { .t-date { display: none; } }
+/* 휴대폰 가로처럼 낮은 화면: 첫 화면이 위로 잘리지 않게 줄임 */
+@media (max-height: 520px) {
+  .t-wrap { gap: 10px; }
+  .t-mark { display: none; }
+  .t-title { font-size: 46px; }
+  .t-lead { font-size: 14px; line-height: 1.55; max-width: 48em; }
+  .t-date strong { font-size: 40px; }
+  #title .maker { padding: 5px 12px; }
+  #title .maker-title b { font-size: 18px; }
+}
 
 /* 캡션 (영화식 자막) */
 #caption { position: fixed; left: 50%; bottom: calc(12vh + 10px); transform: translateX(-50%); text-align: center; z-index: 8; pointer-events: none; width: min(92vw, 760px); }
@@ -366,6 +376,20 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .credit-link { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--dim); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .credit-link:hover { color: var(--text); }
 .credit-link.dark { color: var(--hanji-dim); font-size: 13px; }
+/* 만든 사람 표시 (채쌤) */
+.maker { align-self: flex-start; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(7, 16, 30, .55); }
+.maker-title { display: flex; align-items: baseline; gap: 8px; }
+.maker-title span { font-size: 13px; color: var(--dim); letter-spacing: .08em; }
+.maker-title b { font-family: var(--f-display); font-weight: 800; font-size: 22px; color: var(--gold); }
+.maker-link { font-size: 14px; color: var(--teal); text-decoration: none; border-bottom: 1.5px solid rgba(132, 225, 214, .4); padding-bottom: 1px; }
+.maker-link:hover, .maker-link:focus-visible { color: var(--text); border-bottom-color: var(--text); outline: none; }
+.cert .maker { align-self: center; justify-content: center; background: transparent; border: 0; border-top: 1px dashed rgba(42, 32, 24, .3); border-radius: 0; padding: 10px 6px 0; }
+.cert .maker-title span { color: var(--hanji-dim); }
+.cert .maker-title b { color: var(--hanji-ink); }
+.cert .maker-link { color: #2d5f8a; border-bottom-color: rgba(45, 95, 138, .4); }
+.cert .maker-link:hover, .cert .maker-link:focus-visible { color: var(--hanji-ink); border-bottom-color: var(--hanji-ink); }
+.credits .maker { margin-top: 2px; }
+.no-flexgap .maker > * + * { margin-left: 14px; }
 .credits { position: relative; width: 100%; max-width: 760px; margin: auto; background: rgba(7, 15, 28, .95); border: 1px solid var(--line); border-radius: 22px; padding: clamp(20px, 3vw, 32px); display: flex; flex-direction: column; gap: 10px; }
 .credits .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; }
 .credits h2 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: 30px; }
@@ -461,6 +485,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
       <span><b>03</b>독도 탐사 8곳</span>
       <span><b>30분</b>초등 3~6학년</span>
     </div>
+    <!-- 만든 사람 표시 -->
+    <div class="maker"><div class="maker-title"><span>기획·제작</span><b>채쌤</b></div><a class="maker-link" href="https://blog.naver.com/ai_classroom" target="_blank" rel="noopener">AI 수업 아카이브 · 채쌤 블로그 ↗</a></div>
   </div>
   <div class="t-date"><strong>10.25</strong><span>독도의 날</span></div>
 </section>
@@ -2828,6 +2854,7 @@ function openVideo() {
   $("#vidDone").addEventListener("click", () => { Snd.music = true; openFinale(); });
   $("#vidBack").addEventListener("click", () => { Snd.music = true; ui.finale.hidden = true; S.state = "explore"; show(ui.explore, true); resetView(); });
 }
+const MAKER_HTML = `<div class="maker"><div class="maker-title"><span>기획·제작</span><b>채쌤</b></div><a class="maker-link" href="https://blog.naver.com/ai_classroom" target="_blank" rel="noopener">AI 수업 아카이브 · 채쌤 블로그 ↗</a></div>`;
 function openCredits() {
   const el = $("#credits");
   const url = `https://www.youtube.com/watch?v=${VIDEO.id}`;
@@ -2836,6 +2863,7 @@ function openCredits() {
       <button class="icon-btn close" id="crClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <div class="kicker">출처</div>
       <h2 id="crTitle">사진·영상 출처</h2>
+      ${MAKER_HTML}
       <p class="cr-lead">이 게임의 실제 사진은 위키미디어 공용에서 자유 이용이 허락된 사진(CC 라이선스, 퍼블릭 도메인)과 공공누리 제1유형 사진이에요. 3D 장면은 직접 만든 그림이에요.</p>
       <h3>영상</h3>
       <ul><li><b>${VIDEO.title}</b><span>${VIDEO.channel} · YouTube</span><a href="${url}" target="_blank" rel="noopener">${url}</a></li></ul>
@@ -2863,6 +2891,7 @@ function openFinale() {
       <div class="sign"><span>${date}</span><span>독도 원정대</span><span class="seal" aria-hidden="true">독도<br>지킴</span></div>
       <div class="acts"><button class="btn ghost" id="backExplore" type="button">독도 더 둘러보기</button><button class="btn" id="again" type="button">처음부터 다시</button></div>
       <div class="tip">이름을 쓰고 화면을 캡처하면 임명장을 간직할 수 있어요. · <button class="credit-link dark" id="creditBtn2" type="button">사진·영상 출처</button></div>
+      ${MAKER_HTML}
     </article>`;
   ui.finale.hidden = false;
   $("#certName").focus();

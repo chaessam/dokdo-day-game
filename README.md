@@ -40,5 +40,9 @@ npm run build
 ## 사진·영상
 
 - 기록 카드와 탐사 설명에 실제 사진이 함께 나옵니다. 사진은 `assets/photos/`에 있고, 출처와 라이선스는 [CREDITS.md](CREDITS.md)와 게임 안 '사진·영상 출처' 화면에 있습니다.
-- 마지막 관문 영상은 `index.html`의 `VIDEO` 설정(영상 ID, 제목, 채널)으로 바꿀 수 있습니다.
+- 마지막 관문 영상은 `src/game.html`의 `VIDEO` 설정(영상 ID, 제목, 채널)으로 바꿀 수 있습니다.
 - 사진을 더 넣으려면 `PHOTOS` 목록에 `{ src, alt, credit, link }`를 추가합니다. 저작권이 확인된 사진만 넣어 주세요.
+
+## 만든 사람
+
+기획·제작 **채쌤** · [AI 수업 아카이브 · 채쌤 블로그](https://blog.naver.com/ai_classroom)
