@@ -15,13 +15,27 @@
 
 ## 실행
 
-빌드 과정 없이 `index.html` 하나로 동작합니다. three.js는 jsDelivr CDN에서 불러오므로 인터넷 연결이 필요합니다.
+`index.html`과 `vendor/`, `assets/` 폴더를 그대로 웹에 올리면 됩니다. GitHub Pages에서 저장소 루트를 배포하면 바로 열 수 있습니다. 3D 엔진(three.js)을 함께 넣어 두어서 학교망에서 외부 CDN이 막혀도 동작합니다.
 
 ```sh
-npx serve .   # 또는 python3 -m http.server
+npx serve .   # 또는 python3 -m http.server (파일을 더블클릭해 열면 3D 엔진을 못 불러옵니다)
 ```
 
-GitHub Pages에서 저장소 루트를 배포하면 바로 열 수 있습니다.
+## 지원 기기
+
+- 크롬·삼성 인터넷·웨일 70 이상, 사파리(아이패드) 13 이상, 엣지 79 이상
+- WebGL2가 없는 오래된 태블릿도 WebGL1로 동작합니다(three.js r162 사용).
+- 느린 기기에서는 화질을 자동으로 낮추고, 타이틀 화면의 '화질' 버튼으로 가볍게/선명하게를 직접 고를 수 있습니다.
+- 태블릿·휴대폰: 화면을 끌면 나타나는 조이스틱으로 조종 / 컴퓨터: 방향키
+
+## 고치고 다시 빌드하기
+
+원본은 `src/game.html`입니다. 고친 뒤 아래 명령으로 오래된 브라우저용으로 변환한 `index.html`과 `vendor/three.module.min.js`를 다시 만듭니다.
+
+```sh
+npm install
+npm run build
+```
 
 ## 사진·영상
 
