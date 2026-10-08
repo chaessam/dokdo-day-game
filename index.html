@@ -5246,26 +5246,65 @@ function boot() {
     head.add(reg);
     diver.userData.reg = reg;
     const arms = [];
+    const glove = plain("#4a586c", { roughness: 0.7 }), cuffM = plain("#0e1218");
+    const fingerG = new THREE.CapsuleGeometry(0.017, 0.05, 3, 8).rotateX(Math.PI / 2);
     for (const sx of [1, -1]) {
       const sh = new THREE.Group();
       sh.position.set(sx * 0.3, -0.04, 0.34);
       body.add(sh);
-      const up = new THREE.Mesh(new THREE.CapsuleGeometry(0.068, 0.24, 4, 10).rotateX(Math.PI / 2), suitM);
-      up.position.z = -0.15;
-      sh.add(up);
+      const stripe = (g) => vc(g, (c, x, y, z, nx) => c.copy(nx * sx > 0.72 ? teal : suitC));
+      sh.add(new THREE.Mesh(stripe(new THREE.SphereGeometry(0.082, 14, 10)), suitM));
+      const upG = lathe([[1e-3, -0.31], [0.056, -0.3], [0.062, -0.24], [0.07, -0.14], [0.076, -0.06], [0.074, 0], [1e-3, 0.03]], 16);
+      sh.add(new THREE.Mesh(stripe(upG), suitM));
       const el = new THREE.Group();
-      el.position.z = -0.3;
+      el.position.z = -0.29;
       sh.add(el);
-      const fo = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.22, 4, 10).rotateX(Math.PI / 2), suitM);
-      fo.position.z = -0.13;
-      el.add(fo);
-      const glove = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), black);
-      glove.scale.set(0.8, 0.6, 1.3);
-      glove.position.z = -0.29;
-      el.add(glove);
+      el.add(new THREE.Mesh(stripe(new THREE.SphereGeometry(0.06, 12, 10)), suitM));
+      const foG = lathe([[1e-3, -0.27], [0.044, -0.26], [0.047, -0.2], [0.058, -0.08], [0.06, -0.03], [0.054, 0.01], [1e-3, 0.03]], 16);
+      el.add(new THREE.Mesh(stripe(foG), suitM));
+      const cuff = new THREE.Mesh(new THREE.TorusGeometry(0.047, 0.012, 6, 16), cuffM);
+      cuff.position.z = -0.255;
+      el.add(cuff);
+      if (sx < 0) {
+        const comp = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.03, 0.085), cuffM);
+        comp.position.set(0, 0.05, -0.2);
+        el.add(comp);
+        const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.058, 0.066).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: "#7ff3e2" }));
+        scr.position.set(0, 0.066, -0.2);
+        el.add(scr);
+      }
+      const hand = new THREE.Group();
+      hand.position.z = -0.27;
+      hand.rotation.z = sx * 0.5;
+      hand.scale.setScalar(1.45);
+      el.add(hand);
+      const palm = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), glove);
+      palm.scale.set(1.08, 0.6, 1.15);
+      palm.position.z = -0.05;
+      hand.add(palm);
+      const fingers = [];
+      for (let i = 0; i < 4; i++) {
+        const f = new THREE.Group();
+        f.position.set((i - 1.5) * 0.026, 0, -0.1);
+        f.rotation.set(-0.15 - i * 0.03, (i - 1.5) * -0.08, 0);
+        hand.add(f);
+        const m = new THREE.Mesh(fingerG, glove);
+        m.position.z = -0.03;
+        m.scale.z = i === 0 || i === 3 ? 0.85 : 1;
+        f.add(m);
+        fingers.push(f);
+      }
+      const th = new THREE.Group();
+      th.position.set(-sx * 0.05, -8e-3, -0.04);
+      th.rotation.set(-0.1, -sx * 0.9, 0);
+      hand.add(th);
+      const thm = new THREE.Mesh(fingerG, glove);
+      thm.position.z = -0.03;
+      thm.scale.setScalar(1.05);
+      th.add(thm);
       sh.rotation.set(-0.3, sx * -0.55, 0);
       el.rotation.y = sx * 0.75;
-      arms.push({ sh, el, sx });
+      arms.push({ sh, el, hand, fingers, sx });
     }
     const finShape = new THREE.Shape();
     finShape.moveTo(-0.09, 0);
@@ -5695,6 +5734,10 @@ function boot() {
     for (const A of ud.arms) {
       A.sh.rotation.x = -0.3 + Math.sin(t * 1.3 + A.sx) * 0.06;
       A.el.rotation.x = 0.1 + Math.sin(t * 1.1 + A.sx) * 0.05;
+      A.hand.rotation.x = Math.sin(t * 0.9 + A.sx * 2) * 0.12;
+      A.fingers.forEach((f, i) => {
+        f.rotation.x = -0.18 - i * 0.03 + Math.sin(t * 0.8 + i * 0.4 + A.sx) * 0.08;
+      });
     }
     ud.body.rotation.z = Math.sin(t * w) * 0.035;
     ud.body.position.y = Math.sin(t * 1.2) * 0.04;
