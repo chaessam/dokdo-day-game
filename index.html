@@ -3460,7 +3460,7 @@ function boot() {
       });
       deckTex.wrapS = deckTex.wrapT = THREE.RepeatWrapping;
       deckTex.repeat.set(3, 1);
-      const deck2 = new THREE.Mesh(g, [patchFog(new THREE.MeshStandardMaterial({ map: deckTex, roughness: 0.85 }))]);
+      const deck2 = new THREE.Mesh(g, patchFog(new THREE.MeshStandardMaterial({ map: deckTex, roughness: 0.85, side: THREE.DoubleSide })));
       boat.add(deck2);
       const capPts = (side) => Array.from({ length: NST + 1 }, (_, i) => {
         const u = i / NST;

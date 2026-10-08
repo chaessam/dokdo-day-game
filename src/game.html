@@ -1418,7 +1418,7 @@ const BOAT = { L: 13, zs: 6.0, zb: -7.0 };
       for (let i = 0; i < 16; i++) { const c = 150 + Math.random() * 30; x.fillStyle = `rgb(${c},${c * 0.74},${c * 0.5})`; x.fillRect(i * 16, 0, 16, h); x.fillStyle = "rgba(40,25,10,.55)"; x.fillRect(i * 16, 0, 1.5, h); for (let k = 0; k < 3; k++) x.fillRect(i * 16, Math.random() * h, 16, 1.5); }
     });
     deckTex.wrapS = deckTex.wrapT = THREE.RepeatWrapping; deckTex.repeat.set(3, 1);
-    const deck = new THREE.Mesh(g, [patchFog(new THREE.MeshStandardMaterial({ map: deckTex, roughness: 0.85 }))]);
+    const deck = new THREE.Mesh(g, patchFog(new THREE.MeshStandardMaterial({ map: deckTex, roughness: 0.85, side: THREE.DoubleSide })));
     boat.add(deck);
     // 갑판 위 하얀 뱃전 안쪽 벽은 같은 메시로 충분, 상단 레일(나무 캡)
     const capPts = (side) => Array.from({ length: NST + 1 }, (_, i) => { const u = i / NST; return new THREE.Vector3(hb(u) * 0.95 * side, dk(u) + 0.08, zAt(u)); });
