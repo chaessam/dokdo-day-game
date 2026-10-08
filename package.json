@@ -3,7 +3,9 @@
   "private": true,
   "description": "독도의 날 계기교육용 3D 웹 게임 '독도 원정대'",
   "scripts": {
-    "build": "node tools/build.mjs"
+    "build": "node tools/build.mjs",
+    "dev": "npm run build && npx wrangler dev",
+    "deploy": "npx wrangler deploy"
   },
   "devDependencies": {
     "esbuild": "0.24.0",

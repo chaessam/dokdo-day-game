@@ -1,0 +1,11 @@
+{
+  // 클라우드플레어 Workers 설정 (정적 파일만 배포, 서버 코드 없음)
+  // name은 클라우드플레어 대시보드의 Worker 이름(주소 맨 앞부분)과 같아야 해요.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dokdo-day-game",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "."
+  },
+  "observability": { "enabled": true }
+}

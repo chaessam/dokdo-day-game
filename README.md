@@ -37,6 +37,17 @@ npm install
 npm run build
 ```
 
+## 배포 (Cloudflare 무료 플랜)
+
+서버 코드 없이 정적 파일만 올리는 **Workers**(정적 자산)로 배포합니다. 설정은 `wrangler.jsonc`, 올리지 않을 파일은 `.assetsignore`에 있어요.
+
+1. Cloudflare 대시보드 → **Workers & Pages** → **Create application**
+2. **Import a repository**(GitHub 저장소 가져오기)를 고르고 `dokdo-day-game` 저장소를 선택
+3. 프로젝트 이름은 `dokdo-day-game` (`wrangler.jsonc`의 name과 같아야 함), 빌드 명령은 비워 두고 배포 명령은 기본값 `npx wrangler deploy` 그대로 두고 **Deploy**
+4. 끝나면 `https://dokdo-day-game.<내 계정 subdomain>.workers.dev` 주소로 접속할 수 있어요.
+
+이후 `main` 브랜치에 바뀐 내용이 합쳐지면 자동으로 다시 배포됩니다. `index.html`과 `vendor/`는 빌드 결과를 커밋해 두므로 Cloudflare에서 따로 빌드할 필요가 없어요.
+
 ## 사진·영상
 
 - 기록 카드와 탐사 설명에 실제 사진이 함께 나옵니다. 사진은 `assets/photos/`에 있고, 출처와 라이선스는 [CREDITS.md](CREDITS.md)와 게임 안 '사진·영상 출처' 화면에 있습니다.

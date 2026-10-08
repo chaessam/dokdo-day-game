@@ -64,6 +64,21 @@ body {
   font-family: var(--f-ui);
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+p,
+li,
+dd,
+dt,
+h1,
+h2,
+h3,
+blockquote,
+figcaption,
+.why,
+.q {
+  text-wrap: pretty;
 }
 button {
   font-family: inherit;
@@ -722,7 +737,7 @@ input:focus-visible {
   border-color: var(--teal);
 }
 .right-g {
-  margin-right: 58px;
+  margin-right: 114px;
   min-width: 150px;
 }
 .stars {
@@ -745,7 +760,7 @@ input:focus-visible {
     padding: 10px 14px;
   }
   .right-g {
-    margin-right: 54px;
+    margin-right: 110px;
     min-width: 0;
   }
 }
@@ -1100,10 +1115,21 @@ input:focus-visible {
   color: var(--teal);
 }
 .dv-up {
-  margin-right: 58px;
+  margin-right: 114px;
   padding: 11px 18px;
   font-size: 15px;
   white-space: nowrap;
+}
+@media (max-width: 560px) {
+  .dv-up {
+    position: fixed;
+    top: calc(72px + env(safe-area-inset-top, 0px));
+    right: 16px;
+    margin-right: 0;
+  }
+  .dv-gauge {
+    max-width: calc(100vw - 196px);
+  }
 }
 .dv-up.glow {
   background: var(--gold);
@@ -1470,7 +1496,7 @@ input:focus-visible {
   position: absolute;
   top: calc(16px + env(safe-area-inset-top, 0px));
   left: 16px;
-  right: 74px;
+  right: 130px;
   display: flex;
   gap: 12px;
   align-items: flex-start;
@@ -2418,6 +2444,61 @@ const $ = (s) => document.querySelector(s);
   d.remove();
 })();
 const loadMsg = $("#loadMsg");
+const ORPHAN_SEL = "p, li, h1, h2, h3, blockquote, figcaption, .why, .q, .c-small, .c-big";
+function glueLast(el) {
+  if (el.dataset.glued === el.textContent) return;
+  if (el.tagName === "DD" || el.tagName === "DT" || el.textContent.trim().split(/\s+/).length < 4) {
+    el.dataset.glued = el.textContent;
+    return;
+  }
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), texts = [];
+  while (w.nextNode()) texts.push(w.currentNode);
+  for (let i = texts.length - 1; i >= 0; i--) {
+    const t = texts[i], v = t.nodeValue, trimmed = v.replace(/\s+$/, "");
+    const j = trimmed.lastIndexOf(" ");
+    if (j > 0) {
+      t.nodeValue = v.slice(0, j) + " " + v.slice(j + 1);
+      break;
+    }
+    if (j === 0 && i > 0) {
+      t.nodeValue = " " + v.slice(1);
+      break;
+    }
+    if (trimmed.length > 0 && texts.slice(0, i).some((x) => /\S\s+$/.test(x.nodeValue) || / \S/.test(x.nodeValue))) {
+      for (let k = i - 1; k >= 0; k--) {
+        const pv = texts[k].nodeValue;
+        if (/ $/.test(pv)) {
+          texts[k].nodeValue = pv.replace(/ $/, " ");
+          break;
+        }
+        if (/\S/.test(pv) && pv.indexOf(" ") >= 0) break;
+      }
+      break;
+    }
+    if (trimmed.length > 0) break;
+  }
+  el.dataset.glued = el.textContent;
+}
+function glueAll(root) {
+  if (root.nodeType !== 1) return;
+  if (root.matches && root.matches(ORPHAN_SEL)) glueLast(root);
+  root.querySelectorAll(ORPHAN_SEL).forEach(glueLast);
+}
+glueAll(document.body);
+new MutationObserver((ms) => {
+  for (const m of ms) {
+    if (m.type === "characterData") {
+      const el = m.target.parentElement && m.target.parentElement.closest(ORPHAN_SEL);
+      if (el) glueLast(el);
+    } else m.addedNodes.forEach((n) => {
+      if (n.nodeType === 1) glueAll(n);
+      else if (n.parentElement) {
+        const el = n.parentElement.closest(ORPHAN_SEL);
+        if (el) glueLast(el);
+      }
+    });
+  }
+}).observe(document.body, { childList: true, subtree: true, characterData: true });
 let THREE;
 const THREE_URLS = ["./vendor/three.module.min.js", "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.min.js"];
 (async () => {
@@ -4615,7 +4696,7 @@ function boot() {
     el.classList.toggle("final", allDone);
     $("#ctaBadge").innerHTML = allDone ? STAR_ICON : MASK_ICON;
     $("#ctaKick").textContent = allDone ? "모든 탐사 완료" : "독도 도감 완성";
-    $("#ctaTitle").textContent = allDone ? "독도 지킴이가 될 준비 끝!" : "이제 독도 바닷속으로!";
+    $("#ctaTitle").innerHTML = allDone ? "독도 지킴이가<br>될 준비 끝!" : "이제 독도<br>바닷속으로!";
     $("#ctaText").textContent = allDone ? "섬 위도, 바닷속도 모두 탐사했어요. 마지막 관문에서 영상을 보고 임명장을 받아요." : "섬 위 여덟 곳을 모두 탐사했어요. 잠수복을 입고 독도 바닷속에 사는 생물들을 만나러 가요.";
     $("#ctaBtn").textContent = allDone ? "마지막 관문: 독도 영상" : "바닷속 탐사하기";
     el.hidden = false;
@@ -5167,23 +5248,23 @@ function boot() {
     const arms = [];
     for (const sx of [1, -1]) {
       const sh = new THREE.Group();
-      sh.position.set(sx * 0.23, -0.02, 0.36);
+      sh.position.set(sx * 0.3, -0.04, 0.34);
       body.add(sh);
-      const up = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.24, 4, 10).rotateX(Math.PI / 2), suitM);
+      const up = new THREE.Mesh(new THREE.CapsuleGeometry(0.068, 0.24, 4, 10).rotateX(Math.PI / 2), suitM);
       up.position.z = -0.15;
       sh.add(up);
       const el = new THREE.Group();
       el.position.z = -0.3;
       sh.add(el);
-      const fo = new THREE.Mesh(new THREE.CapsuleGeometry(0.052, 0.22, 4, 10).rotateX(Math.PI / 2), suitM);
+      const fo = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.22, 4, 10).rotateX(Math.PI / 2), suitM);
       fo.position.z = -0.13;
       el.add(fo);
       const glove = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), black);
       glove.scale.set(0.8, 0.6, 1.3);
       glove.position.z = -0.29;
       el.add(glove);
-      sh.rotation.set(0, sx * 0.25, sx * -0.15);
-      el.rotation.y = sx * -0.35;
+      sh.rotation.set(-0.3, sx * -0.55, 0);
+      el.rotation.y = sx * 0.75;
       arms.push({ sh, el, sx });
     }
     const finShape = new THREE.Shape();
@@ -5192,7 +5273,7 @@ function boot() {
     finShape.quadraticCurveTo(0.15, -0.3, 0.17, -0.62);
     finShape.quadraticCurveTo(0, -0.55, -0.17, -0.62);
     finShape.quadraticCurveTo(-0.15, -0.3, -0.09, 0);
-    const finGeo = new THREE.ExtrudeGeometry(finShape, { depth: 0.015, bevelEnabled: false }).rotateX(-Math.PI / 2);
+    const finGeo = new THREE.ExtrudeGeometry(finShape, { depth: 0.015, bevelEnabled: false }).rotateX(Math.PI / 2);
     const legs = [];
     for (const sx of [1, -1]) {
       const hip = new THREE.Group();
@@ -5612,7 +5693,7 @@ function boot() {
       L.ankle.rotation.x = Math.sin(t * w + ph - 1.7) * 0.35 * kickAmp;
     }
     for (const A of ud.arms) {
-      A.sh.rotation.x = Math.sin(t * 1.3 + A.sx) * 0.06;
+      A.sh.rotation.x = -0.3 + Math.sin(t * 1.3 + A.sx) * 0.06;
       A.el.rotation.x = 0.1 + Math.sin(t * 1.1 + A.sx) * 0.05;
     }
     ud.body.rotation.z = Math.sin(t * w) * 0.035;
@@ -6084,7 +6165,7 @@ function boot() {
     ui.title.hidden = false;
     await fadeTo(false);
   }, 400);
-  window.__dokdo = { openSpot, collectSpot, LIONS, startLionPod, diver, isWebGL2, THREE, scene, school, rays, ghost, under, S, STORM, STORM_Z, bottles, DIVE, SEA_SPOTS, enterDive, exitDive, camera, boat, setSun, placeBoat, skipToExplore, startVoyage, openFinale, openSpot, collectSpot, startArrival, openRecord, openVideo };
+  window.__dokdo = { showCenterCta, openNote, SEA, SPOTS, openCredits, openPause, openSpot, collectSpot, LIONS, startLionPod, diver, isWebGL2, THREE, scene, school, rays, ghost, under, S, STORM, STORM_Z, bottles, DIVE, SEA_SPOTS, enterDive, exitDive, camera, boat, setSun, placeBoat, skipToExplore, startVoyage, openFinale, openSpot, collectSpot, startArrival, openRecord, openVideo };
 }
 </script>
 
