@@ -77,6 +77,17 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .icon-btn svg { width: 20px; height: 20px; }
 .kicker { font-family: var(--f-num); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
 #soundBtn { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 30; }
+#pauseBtn { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); right: 72px; z-index: 30; }
+#pauseBtn[hidden] { display: none; }
+.pause-card { position: relative; width: 100%; max-width: 640px; margin: auto; background: rgba(7, 15, 28, .95); border: 1px solid var(--line); border-radius: 22px; padding: clamp(20px, 3vw, 30px); display: flex; flex-direction: column; gap: 12px; }
+.pause-card h2 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: 32px; }
+.pause-card h3 { margin: 8px 0 0; font-size: 15px; color: var(--gold); font-weight: 700; }
+.pause-card .btn { align-self: stretch; }
+.p-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.p-list button { width: 100%; text-align: left; display: flex; gap: 10px; align-items: baseline; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255, 255, 255, .05); color: var(--text); font: inherit; font-size: 15px; cursor: pointer; }
+.p-list button:hover { background: rgba(255, 255, 255, .12); }
+.p-list b { font-family: var(--f-num); font-weight: 500; color: var(--gold); font-size: 13px; flex: none; }
+.p-empty { margin: 0; color: var(--dim); font-size: 14px; }
 
 /* 로딩 */
 #loading { position: fixed; inset: 0; z-index: 50; background: var(--night); display: grid; place-items: center; text-align: center; transition: opacity .8s ease; }
@@ -281,6 +292,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .opt { border: 1.5px solid rgba(42, 32, 24, .35); background: rgba(255, 255, 255, .45); color: var(--hanji-ink); border-radius: 12px; padding: 14px 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: transform .12s, background .2s; }
 .opt:hover:not(:disabled) { transform: translateY(-2px); background: rgba(255, 255, 255, .8); }
 .opt:disabled { cursor: default; }
+.doc:focus { outline: none; }
 .opt.right { background: #2f7d4a; border-color: #2f7d4a; color: #fff; }
 .opt.wrong { background: #b5392e; border-color: #b5392e; color: #fff; animation: shake .4s; }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
@@ -578,6 +590,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
   <svg id="sndOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
   <svg id="sndOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
 </button>
+<button class="icon-btn" id="pauseBtn" type="button" aria-label="일시정지" hidden>
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
+</button>
+<div id="pauseMenu" class="modal" hidden></div>
 <div class="toast" id="toast"></div>
 <div id="credits" class="modal" hidden></div>
 <div class="fade on" id="fade"></div>
@@ -1396,8 +1412,8 @@ const BOAT = { L: 13, zs: 6.0, zb: -7.0 };
       x.fillStyle = "#1b1f24"; x.fillRect(0, Y(0.28), w, Y(0.05) - Y(0.28));
       x.fillStyle = "#1d4f8f"; x.fillRect(0, Y(1.0), w, Y(0.78) - Y(1.0));
       x.textAlign = "center"; x.fillStyle = "#16365f";
-      x.font = "800 40px 'Nanum Myeongjo', serif"; x.fillText("독도탐험호", w / 2, Y(1.22));
-      x.font = "700 24px 'IBM Plex Sans KR', sans-serif"; x.fillText("울 릉", w / 2, Y(1.5) - 6);
+      x.font = "800 32px 'Nanum Myeongjo', serif"; x.fillText("독도탐험호", w / 2, Y(0.34));
+      x.font = "700 18px 'IBM Plex Sans KR', sans-serif"; x.fillText("울 릉", w / 2, Y(1.08));
     });
     const P = g.attributes.position, UV = g.attributes.uv;
     for (let i = 0; i < P.count; i++) UV.setXY(i, (P.getX(i) + Bh) / (2 * Bh), (P.getY(i) - yMin) / (yMax - yMin));
@@ -1541,8 +1557,8 @@ const BOAT = { L: 13, zs: 6.0, zb: -7.0 };
     put(cyl(0.08, 0.08, 2.2, craneM, 8), 0, y + 2.78, z + 0.6, 0, 0, Math.PI / 2);
     put(new THREE.Mesh(boxG(0.25, 0.35, 0.25), dark), 0, y + 2.4, z + 0.6);
     const ens = flagPole(0, 0, 0, 1.8, 0.7); boat.remove(ens); scene.remove(ens); ens.position.set(0.9, y + 0.5, BOAT.zs - 0.2); boat.add(ens);
-    for (const xx of [-0.25, 0.25]) put(cyl(0.025, 0.025, 1.6, steel, 5), -0.9 + xx, y - 0.1, BOAT.zs + 0.08);
-    for (let k = 0; k < 4; k++) put(cyl(0.02, 0.02, 0.5, steel, 5), -0.9, y - 0.7 + k * 0.33, BOAT.zs + 0.08, 0, 0, Math.PI / 2);
+    for (const xx of [-0.25, 0.25]) put(cyl(0.025, 0.025, 1.6, steel, 5), -1.42 + xx, y - 0.1, BOAT.zs + 0.08);
+    for (let k = 0; k < 4; k++) put(cyl(0.02, 0.02, 0.5, steel, 5), -1.42, y - 0.7 + k * 0.33, BOAT.zs + 0.08, 0, 0, Math.PI / 2);
   }
 
   // 방현재(타이어)
@@ -2000,7 +2016,7 @@ function openNote(r, opts) {
   const K = NOTE_KIND[r.kind] || NOTE_KIND.history;
   const unit = r.unit ?? (r.kind === "history" ? "년" : "");
   ui.record.innerHTML = `
-    <article class="doc ${K.cls}" role="dialog" aria-modal="true" aria-labelledby="docTitle">
+    <article class="doc ${K.cls}" role="dialog" aria-modal="true" aria-labelledby="docTitle" tabindex="-1">
       <div class="doc-head">
         <div class="seal" aria-hidden="true">${K.seal}${opts.n ? "<br>" + opts.n : ""}</div>
         <div style="min-width:0">
@@ -2017,7 +2033,7 @@ function openNote(r, opts) {
       ${r.note ? `<p class="note">${r.note}</p>` : ""}
       <div class="quiz">
         <p class="q">Q. ${r.quiz.q}</p>
-        <div class="opts">${r.quiz.a.map((a, k) => `<button class="opt" type="button" data-k="${k}">${a}</button>`).join("")}</div>
+        <div class="opts">${shuffled(r.quiz.a.map((a, k) => k)).map((k) => `<button class="opt" type="button" data-k="${k}">${r.quiz.a[k]}</button>`).join("")}</div>
         <p class="why" id="why"></p>
       </div>
       <button class="btn" type="button" id="docNext" hidden>${opts.next}</button>
@@ -2033,8 +2049,16 @@ function openNote(r, opts) {
     const nx = $("#docNext"); nx.hidden = false; nx.focus({ preventScroll: true }); nx.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }));
   $("#docNext").addEventListener("click", () => { ui.record.hidden = true; opts.onDone?.(); });
-  ui.record.querySelector(".opt").focus({ preventScroll: true });
+  if (opts.review) {
+    // 다시 보기: 정답과 풀이를 바로 보여 주고 점수는 세지 않는다
+    ui.record.querySelectorAll(".opt").forEach((o) => { o.disabled = true; if (+o.dataset.k === r.quiz.c) o.classList.add("right"); });
+    $("#why").innerHTML = "정답: <b>" + r.quiz.a[r.quiz.c] + "</b>. " + r.quiz.why;
+    $("#docNext").hidden = false;
+  }
+  // 첫 보기에 초점을 두면 노란 테두리가 정답 힌트처럼 보여서, 카드 자체에 초점을 둔다
+  ui.record.querySelector(".doc").focus({ preventScroll: true });
 }
+function shuffled(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 function openRecord(i) {
   openNote(RECORDS[i], { n: i + 1, total: NREC, next: i === NREC - 1 ? "독도를 향해 계속 항해" : "항해 계속하기", onDone: () => { S.state = "voyage"; } });
 }
@@ -3004,7 +3028,51 @@ snow.material.uniforms.uScale.value = innerHeight * 0.55; bubbles.p.material.uni
 
 /* ---------- 메인 루프 ---------- */
 let last = performance.now(), perfAcc = 0, perfN = 0, perfDone = false, perfStage = 0;
+/* ---------- 일시정지 ---------- */
+const pauseBtn = $("#pauseBtn"), pauseMenu = $("#pauseMenu");
+function updatePauseVis() {
+  const want = ["intro", "voyage", "dive", "diveEnd", "explore"].includes(S.state) && ui.record.hidden && pauseMenu.hidden;
+  if (pauseBtn.hidden === want) pauseBtn.hidden = !want;
+}
+function setPaused(on) {
+  S.paused = on;
+  if (Snd.master) Snd.master.gain.setTargetAtTime(on || !Snd.on ? 0 : 0.9, Snd.ctx.currentTime, 0.1);
+  for (const k in keys) keys[k] = false;
+  if (DIVE.keys) for (const k in DIVE.keys) DIVE.keys[k] = 0;
+  if (typeof joyRelease === "function" && JOY.id !== null) joyRelease();
+}
+function openPause() {
+  if (!S.paused) setPaused(true);
+  const got = RECORDS.slice(0, S.collected);
+  const seaGot = SEA.filter((r) => S.sea.has(r.id));
+  const item = (r, i, label) => `<li><button type="button" data-i="${i}"><b>${label}</b><span>${r.title}</span></button></li>`;
+  pauseMenu.innerHTML = `
+    <article class="pause-card" role="dialog" aria-modal="true" aria-labelledby="pTitle">
+      <div class="kicker">잠깐 멈춤</div>
+      <h2 id="pTitle">일시정지</h2>
+      <button class="btn" id="pResume" type="button">계속하기</button>
+      <h3>모은 유리병 기록 ${got.length} / ${NREC}</h3>
+      ${got.length ? `<ul class="p-list" id="pRec">${got.map((r, i) => item(r, i, String(i + 1).padStart(2, "0"))).join("")}</ul>` : `<p class="p-empty">아직 건진 유리병이 없어요. 바다에 떠 있는 유리병을 찾아보세요.</p>`}
+      ${seaGot.length ? `<h3>바닷속 관찰 노트 ${seaGot.length} / ${SEA.length}</h3><ul class="p-list" id="pSea">${seaGot.map((r, i) => item(r, i, "바다")).join("")}</ul>` : ""}
+    </article>`;
+  pauseMenu.hidden = false;
+  pauseBtn.hidden = true;
+  $("#pResume").addEventListener("click", closePause);
+  $("#pResume").focus({ preventScroll: true });
+  const review = (r) => { pauseMenu.hidden = true; openNote(r, { review: true, next: "목록으로 돌아가기", onDone: openPause }); };
+  pauseMenu.querySelectorAll("#pRec button").forEach((b) => b.addEventListener("click", () => review(got[+b.dataset.i])));
+  pauseMenu.querySelectorAll("#pSea button").forEach((b) => b.addEventListener("click", () => review(seaGot[+b.dataset.i])));
+}
+function closePause() { pauseMenu.hidden = true; setPaused(false); }
+pauseBtn.addEventListener("click", openPause);
+addEventListener("keydown", (e) => {
+  if (e.code !== "KeyP" || e.target.tagName === "INPUT") return;
+  if (!pauseMenu.hidden) closePause(); else if (!pauseBtn.hidden) openPause();
+});
+
 function frame(now) {
+  updatePauseVis();
+  if (S.paused) { last = now; frame.prev = now; renderer.render(scene, camera); requestAnimationFrame(frame); return; }
   const dt = S.fixedDt || Math.min(0.05, (now - last) / 1000); last = now;
   S.time += dt; S.t += dt; S.frame++;
   U.uTime.value = S.time;

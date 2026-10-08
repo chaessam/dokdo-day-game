@@ -241,6 +241,81 @@ input:focus-visible {
   right: 16px;
   z-index: 30;
 }
+#pauseBtn {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: 72px;
+  z-index: 30;
+}
+#pauseBtn[hidden] {
+  display: none;
+}
+.pause-card {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: auto;
+  background: rgba(7, 15, 28, .95);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 25px; padding: clamp(20px, 3vw, 30px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pause-card h2 {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 32px;
+}
+.pause-card h3 {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.pause-card .btn {
+  align-self: stretch;
+}
+.p-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+.p-list button {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .05);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+.p-list button:hover {
+  background: rgba(255, 255, 255, .12);
+}
+.p-list b {
+  font-family: var(--f-num);
+  font-weight: 500;
+  color: var(--gold);
+  font-size: 13px;
+  flex: none;
+}
+.p-empty {
+  margin: 0;
+  color: var(--dim);
+  font-size: 14px;
+}
 #loading {
   position: fixed;
   top: 0;
@@ -1344,6 +1419,9 @@ input:focus-visible {
 .opt:disabled {
   cursor: default;
 }
+.doc:focus {
+  outline: none;
+}
 .opt.right {
   background: #2f7d4a;
   border-color: #2f7d4a;
@@ -2320,6 +2398,10 @@ input:focus-visible {
   <svg id="sndOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
   <svg id="sndOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
 </button>
+<button class="icon-btn" id="pauseBtn" type="button" aria-label="일시정지" hidden>
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
+</button>
+<div id="pauseMenu" class="modal" hidden></div>
 <div class="toast" id="toast"></div>
 <div id="credits" class="modal" hidden></div>
 <div class="fade on" id="fade"></div>
@@ -3414,10 +3496,10 @@ function boot() {
         x.fillRect(0, Y(1), w, Y(0.78) - Y(1));
         x.textAlign = "center";
         x.fillStyle = "#16365f";
-        x.font = "800 40px 'Nanum Myeongjo', serif";
-        x.fillText("독도탐험호", w / 2, Y(1.22));
-        x.font = "700 24px 'IBM Plex Sans KR', sans-serif";
-        x.fillText("울 릉", w / 2, Y(1.5) - 6);
+        x.font = "800 32px 'Nanum Myeongjo', serif";
+        x.fillText("독도탐험호", w / 2, Y(0.34));
+        x.font = "700 18px 'IBM Plex Sans KR', sans-serif";
+        x.fillText("울 릉", w / 2, Y(1.08));
       });
       const P = g.attributes.position, UV = g.attributes.uv;
       for (let i = 0; i < P.count; i++) UV.setXY(i, (P.getX(i) + Bh) / (2 * Bh), (P.getY(i) - yMin) / (yMax - yMin));
@@ -3613,8 +3695,8 @@ function boot() {
       scene.remove(ens);
       ens.position.set(0.9, y + 0.5, BOAT.zs - 0.2);
       boat.add(ens);
-      for (const xx of [-0.25, 0.25]) put(cyl(0.025, 0.025, 1.6, steel, 5), -0.9 + xx, y - 0.1, BOAT.zs + 0.08);
-      for (let k = 0; k < 4; k++) put(cyl(0.02, 0.02, 0.5, steel, 5), -0.9, y - 0.7 + k * 0.33, BOAT.zs + 0.08, 0, 0, Math.PI / 2);
+      for (const xx of [-0.25, 0.25]) put(cyl(0.025, 0.025, 1.6, steel, 5), -1.42 + xx, y - 0.1, BOAT.zs + 0.08);
+      for (let k = 0; k < 4; k++) put(cyl(0.02, 0.02, 0.5, steel, 5), -1.42, y - 0.7 + k * 0.33, BOAT.zs + 0.08, 0, 0, Math.PI / 2);
     }
     for (const side of [1, -1]) for (const z of [-1.8, 0.6, 3]) {
       const x = halfB(z) * 1 * side + side * 0.1;
@@ -4291,7 +4373,7 @@ function boot() {
     var _a2;
     const K = NOTE_KIND[r.kind] || NOTE_KIND.history;
     const unit = (_a2 = r.unit) != null ? _a2 : r.kind === "history" ? "년" : "";
-    ui.record.innerHTML = '\n    <article class="doc '.concat(K.cls, '" role="dialog" aria-modal="true" aria-labelledby="docTitle">\n      <div class="doc-head">\n        <div class="seal" aria-hidden="true">').concat(K.seal).concat(opts.n ? "<br>" + opts.n : "", '</div>\n        <div style="min-width:0">\n          <div class="doc-kick">').concat(K.kick).concat(opts.total ? " · ".concat(opts.n, " / ").concat(opts.total) : "", '</div>\n          <div class="doc-year ').concat(r.year.length > 5 ? "word" : "", '">').concat(r.year, "<small>").concat(unit, '</small></div>\n          <div class="doc-era">').concat(r.era).concat(r.src ? " · " + r.src : "", "</div>\n        </div>\n      </div>\n      ").concat(photoHTML(r.photo), '\n      <h2 id="docTitle">').concat(r.title, "</h2>\n      <p>").concat(r.body, "</p>\n      ").concat(r.facts ? '<dl class="facts">'.concat(r.facts.map(([k, v]) => "<div><dt>".concat(k, "</dt><dd>").concat(v, "</dd></div>")).join(""), "</dl>") : "", "\n      ").concat(r.quote ? "<blockquote>“".concat(r.quote, "”<cite>").concat(r.cite, "</cite></blockquote>") : "", "\n      ").concat(r.note ? '<p class="note">'.concat(r.note, "</p>") : "", '\n      <div class="quiz">\n        <p class="q">Q. ').concat(r.quiz.q, '</p>\n        <div class="opts">').concat(r.quiz.a.map((a, k) => '<button class="opt" type="button" data-k="'.concat(k, '">').concat(a, "</button>")).join(""), '</div>\n        <p class="why" id="why"></p>\n      </div>\n      <button class="btn" type="button" id="docNext" hidden>').concat(opts.next, "</button>\n    </article>");
+    ui.record.innerHTML = '\n    <article class="doc '.concat(K.cls, '" role="dialog" aria-modal="true" aria-labelledby="docTitle" tabindex="-1">\n      <div class="doc-head">\n        <div class="seal" aria-hidden="true">').concat(K.seal).concat(opts.n ? "<br>" + opts.n : "", '</div>\n        <div style="min-width:0">\n          <div class="doc-kick">').concat(K.kick).concat(opts.total ? " · ".concat(opts.n, " / ").concat(opts.total) : "", '</div>\n          <div class="doc-year ').concat(r.year.length > 5 ? "word" : "", '">').concat(r.year, "<small>").concat(unit, '</small></div>\n          <div class="doc-era">').concat(r.era).concat(r.src ? " · " + r.src : "", "</div>\n        </div>\n      </div>\n      ").concat(photoHTML(r.photo), '\n      <h2 id="docTitle">').concat(r.title, "</h2>\n      <p>").concat(r.body, "</p>\n      ").concat(r.facts ? '<dl class="facts">'.concat(r.facts.map(([k, v]) => "<div><dt>".concat(k, "</dt><dd>").concat(v, "</dd></div>")).join(""), "</dl>") : "", "\n      ").concat(r.quote ? "<blockquote>“".concat(r.quote, "”<cite>").concat(r.cite, "</cite></blockquote>") : "", "\n      ").concat(r.note ? '<p class="note">'.concat(r.note, "</p>") : "", '\n      <div class="quiz">\n        <p class="q">Q. ').concat(r.quiz.q, '</p>\n        <div class="opts">').concat(shuffled(r.quiz.a.map((a, k) => k)).map((k) => '<button class="opt" type="button" data-k="'.concat(k, '">').concat(r.quiz.a[k], "</button>")).join(""), '</div>\n        <p class="why" id="why"></p>\n      </div>\n      <button class="btn" type="button" id="docNext" hidden>').concat(opts.next, "</button>\n    </article>");
     ui.record.hidden = false;
     ui.record.querySelectorAll(".opt").forEach((btn) => btn.addEventListener("click", () => {
       const k = +btn.dataset.k, right = k === r.quiz.c;
@@ -4320,7 +4402,25 @@ function boot() {
       ui.record.hidden = true;
       (_a3 = opts.onDone) == null ? void 0 : _a3.call(opts);
     });
-    ui.record.querySelector(".opt").focus({ preventScroll: true });
+    if (opts.review) {
+      ui.record.querySelectorAll(".opt").forEach((o) => {
+        o.disabled = true;
+        if (+o.dataset.k === r.quiz.c) o.classList.add("right");
+      });
+      $("#why").innerHTML = "정답: <b>" + r.quiz.a[r.quiz.c] + "</b>. " + r.quiz.why;
+      $("#docNext").hidden = false;
+    }
+    ui.record.querySelector(".doc").focus({ preventScroll: true });
+  }
+  function shuffled(a) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
   }
   function openRecord(i) {
     openNote(RECORDS[i], { n: i + 1, total: NREC, next: i === NREC - 1 ? "독도를 향해 계속 항해" : "항해 계속하기", onDone: () => {
@@ -5815,7 +5915,54 @@ function boot() {
   snow.material.uniforms.uScale.value = innerHeight * 0.55;
   bubbles.p.material.uniforms.uScale.value = innerHeight * 0.55;
   let last = performance.now(), perfAcc = 0, perfN = 0, perfDone = false, perfStage = 0;
+  const pauseBtn = $("#pauseBtn"), pauseMenu = $("#pauseMenu");
+  function updatePauseVis() {
+    const want = ["intro", "voyage", "dive", "diveEnd", "explore"].includes(S.state) && ui.record.hidden && pauseMenu.hidden;
+    if (pauseBtn.hidden === want) pauseBtn.hidden = !want;
+  }
+  function setPaused(on) {
+    S.paused = on;
+    if (Snd.master) Snd.master.gain.setTargetAtTime(on || !Snd.on ? 0 : 0.9, Snd.ctx.currentTime, 0.1);
+    for (const k in keys) keys[k] = false;
+    if (DIVE.keys) for (const k in DIVE.keys) DIVE.keys[k] = 0;
+    if (typeof joyRelease === "function" && JOY.id !== null) joyRelease();
+  }
+  function openPause() {
+    if (!S.paused) setPaused(true);
+    const got = RECORDS.slice(0, S.collected);
+    const seaGot = SEA.filter((r) => S.sea.has(r.id));
+    const item = (r, i, label) => '<li><button type="button" data-i="'.concat(i, '"><b>').concat(label, "</b><span>").concat(r.title, "</span></button></li>");
+    pauseMenu.innerHTML = '\n    <article class="pause-card" role="dialog" aria-modal="true" aria-labelledby="pTitle">\n      <div class="kicker">잠깐 멈춤</div>\n      <h2 id="pTitle">일시정지</h2>\n      <button class="btn" id="pResume" type="button">계속하기</button>\n      <h3>모은 유리병 기록 '.concat(got.length, " / ").concat(NREC, "</h3>\n      ").concat(got.length ? '<ul class="p-list" id="pRec">'.concat(got.map((r, i) => item(r, i, String(i + 1).padStart(2, "0"))).join(""), "</ul>") : '<p class="p-empty">아직 건진 유리병이 없어요. 바다에 떠 있는 유리병을 찾아보세요.</p>', "\n      ").concat(seaGot.length ? "<h3>바닷속 관찰 노트 ".concat(seaGot.length, " / ").concat(SEA.length, '</h3><ul class="p-list" id="pSea">').concat(seaGot.map((r, i) => item(r, i, "바다")).join(""), "</ul>") : "", "\n    </article>");
+    pauseMenu.hidden = false;
+    pauseBtn.hidden = true;
+    $("#pResume").addEventListener("click", closePause);
+    $("#pResume").focus({ preventScroll: true });
+    const review = (r) => {
+      pauseMenu.hidden = true;
+      openNote(r, { review: true, next: "목록으로 돌아가기", onDone: openPause });
+    };
+    pauseMenu.querySelectorAll("#pRec button").forEach((b) => b.addEventListener("click", () => review(got[+b.dataset.i])));
+    pauseMenu.querySelectorAll("#pSea button").forEach((b) => b.addEventListener("click", () => review(seaGot[+b.dataset.i])));
+  }
+  function closePause() {
+    pauseMenu.hidden = true;
+    setPaused(false);
+  }
+  pauseBtn.addEventListener("click", openPause);
+  addEventListener("keydown", (e) => {
+    if (e.code !== "KeyP" || e.target.tagName === "INPUT") return;
+    if (!pauseMenu.hidden) closePause();
+    else if (!pauseBtn.hidden) openPause();
+  });
   function frame(now) {
+    updatePauseVis();
+    if (S.paused) {
+      last = now;
+      frame.prev = now;
+      renderer.render(scene, camera);
+      requestAnimationFrame(frame);
+      return;
+    }
     const dt = S.fixedDt || Math.min(0.05, (now - last) / 1e3);
     last = now;
     S.time += dt;
