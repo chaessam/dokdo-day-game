@@ -15,7 +15,7 @@
 | `assets/photos/r-sejong.jpg` | 배 위에서 바라본 독도. 날씨가 맑으면 멀리서도 또렷하게 보여요. | Korea.net(해외문화홍보원) · CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:KOCIS_Dokdo_Islands_(4925397717).jpg |
 | `assets/photos/r-gull.jpg` | 괭이갈매기. 노란 부리 끝의 빨간 점과 꽁지의 검은 띠가 특징이에요. | kirinzi · CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Larus_crassirostris_411338457.jpg |
 | `assets/photos/r-anyongbok.jpg` | 부산 수영사적공원에 있는 안용복 장군 사당 | Seudo · CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Shrine_for_General_An_Yong-bok_(Busan)_-_the_main_shrine.jpg |
-| `assets/photos/r-sea.jpg` | 독도새우 가운데 하나인 도화새우 | Daiju Azuma · CC BY-SA 2.5 | https://commons.wikimedia.org/wiki/File:Pandalus_hypsinotus.jpg |
+| `assets/photos/r-sea.jpg` | 독도새우 가운데 하나인 도화새우 (유리병 기록·바닷속 노트) | Daiju Azuma · CC BY-SA 2.5 | https://commons.wikimedia.org/wiki/File:Pandalus_hypsinotus.jpg |
 | `assets/photos/r-plants.jpg` | 바닷가 바위틈에 피는 해국 | 국립생태원 · 공공누리 제1유형 | https://commons.wikimedia.org/wiki/File:Aster_spathulifolius.jpg |
 | `assets/photos/r-decree.jpg` | 대한제국 칙령 제41호 (1900년) | 대한제국 정부 · 퍼블릭 도메인 | https://commons.wikimedia.org/wiki/File:Royal_Decree_No.41.jpg |
 | `assets/photos/r-sealion.jpg` | 1934년 6월, 독도 바위 위에서 쉬고 있는 강치 | 작자 미상 · 퍼블릭 도메인 | https://commons.wikimedia.org/wiki/File:Sea_lion_in_Takeshima,_Japan_(June_1934).jpg |
@@ -26,3 +26,8 @@
 | `assets/photos/s-house.jpg` | 동도 꼭대기에서 내려다본 서도. 아래쪽 바닷가에 주민 숙소가 있어요. | Ulleungdont · CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Dokdo-West-Isle.JPG |
 | `assets/photos/s-gull.jpg` | 서도 꼭대기에 둥지를 튼 괭이갈매기들. 뒤로 동도가 보여요. | Ulleungdont · CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Dokdo-East-Isle.JPG |
 | `assets/photos/s-seal.jpg` | 1930년대 독도에서 강치를 산 채로 잡던 일본 어민들 | 작자 미상 · 퍼블릭 도메인 | https://commons.wikimedia.org/wiki/File:Live_catching_of_Sealion_in_Takeshima,_by_Japanese_fishermans.jpg |
+| `assets/photos/sea-kelp.jpg` | 독도의 감태·대황과 같은 무리의 갈색 해조류가 이룬 바다 숲 (남아프리카 바다) | Peter Southwood · CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Dense_kep_forest_with_understorey_P9041201.JPG |
+| `assets/photos/sea-abalone.jpg` | 전복 껍데기 | James St. John · CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Haliotis_discus_(disk_abalone)_1_(24196696646).jpg |
+| `assets/photos/sea-cucumber.jpg` | 돌기해삼 (일본 수족관) | harum.koh · CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Japan_sea_animal,_Apostichopus_japonicus.jpg |
+| `assets/photos/sea-fish.jpg` | 다 자란 혹돔 (일본 수족관) | Totti · CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Semicossyphus_reticulatus_Marinepia1.jpg |
+| `assets/photos/sea-urchin.jpg` | 성게가 해조류를 먹어 치운 바다, 갯녹음 (뉴질랜드) | Shaun Lee · CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Kina_barrens_Shaun_Lee_52065449.jpg |
