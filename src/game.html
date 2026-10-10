@@ -320,6 +320,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .opt:hover:not(:disabled) { transform: translateY(-2px); background: rgba(255, 255, 255, .8); }
 .opt:disabled { cursor: default; }
 .doc:focus { outline: none; }
+/* 좁은 화면: 오른쪽 위 소리·일시정지 버튼과 카드가 겹치지 않게 */
+@media (max-width: 560px) { #record .doc { margin-top: 52px; } }
 .opt.right { background: #2f7d4a; border-color: #2f7d4a; color: #fff; }
 .opt.wrong { background: #b5392e; border-color: #b5392e; color: #fff; animation: shake .4s; }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
@@ -801,6 +803,11 @@ const PHOTOS = {
   "s-house": { src: "assets/photos/s-house.jpg", alt: "동도 꼭대기에서 내려다본 서도. 아래쪽 바닷가에 주민 숙소가 있어요.", credit: "Ulleungdont · CC BY-SA 3.0", link: "https://commons.wikimedia.org/wiki/File:Dokdo-West-Isle.JPG" },
   "s-gull": { src: "assets/photos/s-gull.jpg", alt: "서도 꼭대기에 둥지를 튼 괭이갈매기들. 뒤로 동도가 보여요.", credit: "Ulleungdont · CC BY-SA 3.0", link: "https://commons.wikimedia.org/wiki/File:Dokdo-East-Isle.JPG" },
   "s-seal": { src: "assets/photos/s-seal.jpg", alt: "1930년대 독도에서 강치를 산 채로 잡던 일본 어민들", credit: "작자 미상 · 퍼블릭 도메인", link: "https://commons.wikimedia.org/wiki/File:Live_catching_of_Sealion_in_Takeshima,_by_Japanese_fishermans.jpg" },
+  "sea-kelp": { src: "assets/photos/sea-kelp.jpg", alt: "독도의 감태·대황과 같은 무리의 갈색 해조류가 이룬 바다 숲 (남아프리카 바다)", credit: "Peter Southwood · CC BY-SA 3.0", link: "https://commons.wikimedia.org/wiki/File:Dense_kep_forest_with_understorey_P9041201.JPG" },
+  "sea-abalone": { src: "assets/photos/sea-abalone.jpg", alt: "전복 껍데기. 가장자리에 줄지어 난 구멍으로 물을 내보내며 숨을 쉬어요.", credit: "James St. John · CC BY 2.0", link: "https://commons.wikimedia.org/wiki/File:Haliotis_discus_(disk_abalone)_1_(24196696646).jpg" },
+  "sea-cucumber": { src: "assets/photos/sea-cucumber.jpg", alt: "바닥을 기어 다니는 돌기해삼 (일본 수족관)", credit: "harum.koh · CC BY-SA 2.0", link: "https://commons.wikimedia.org/wiki/File:Japan_sea_animal,_Apostichopus_japonicus.jpg" },
+  "sea-fish": { src: "assets/photos/sea-fish.jpg", alt: "이마에 커다란 혹이 튀어나온 다 자란 혹돔 (일본 수족관)", credit: "Totti · CC BY-SA 4.0", link: "https://commons.wikimedia.org/wiki/File:Semicossyphus_reticulatus_Marinepia1.jpg" },
+  "sea-urchin": { src: "assets/photos/sea-urchin.jpg", alt: "성게가 해조류를 먹어 치워 바위가 드러난 바다 (뉴질랜드). 이렇게 바다 숲이 사라지는 것이 갯녹음이에요.", credit: "Shaun Lee · CC BY 4.0", link: "https://commons.wikimedia.org/wiki/File:Kina_barrens_Shaun_Lee_52065449.jpg" },
 };
 ["r-islands", null, "r-volcano", "r-sejong", "r-gull", "r-anyongbok", "r-sea", null, "r-plants", "r-decree", "r-sealion", null].forEach((k, i) => { if (k) RECORDS[i].photo = PHOTOS[k]; });
 SPOTS.forEach((s) => { if (PHOTOS["s-" + s.id]) s.photo = PHOTOS["s-" + s.id]; });
@@ -2351,6 +2358,8 @@ const SEA = [
     note: "5월 10일 ‘바다식목일’에는 바닷속에 해조류를 심어 바다 숲을 가꿔요.",
     quiz: { q: "바다 숲이 사라지고 바위가 하얗게 변하는 일을 무엇이라고 할까요?", a: ["갯녹음", "썰물"], c: 0, why: "<b>갯녹음</b>은 ‘바다 사막화’라고도 해요." } },
 ];
+// 바닷속 관찰 노트에도 실제 사진 (독도새우는 유리병 기록의 도화새우 사진을 함께 쓴다)
+SEA.forEach((c) => { c.photo = c.id === "shrimp" ? PHOTOS["r-sea"] : PHOTOS["sea-" + c.id]; });
 if (PHOTOS["r-sea"]) SEA.find((c) => c.id === "shrimp").photo = PHOTOS["r-sea"];
 const SEA_ICON = {
   kelp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 22c-2-5 2-7 0-12S9 4 9 2M15 22c2-4-2-6 0-10s-1-6 1-9"/></svg>',
@@ -2608,10 +2617,20 @@ const TRASH = (() => {
     // 멀리서도 눈에 띄게 은은한 주황 빛
     const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: "#ffcf8a", transparent: true, opacity: 0.4, depthWrite: false, blending: THREE.AdditiveBlending }));
     glow.scale.set(2.8, 2.8, 1); g.add(glow);
-    out.push({ ...kind, u, g, base: pos.clone(), ph: r() * 6.28, got: false, gotT: 0 });
+    out.push({ ...kind, u, g, base: pos.clone(), ph: r() * 6.28, got: false, gotT: 0, fadeT: 1 });
   }
   return out;
 })();
+// 놓친 쓰레기는 해류를 타고 앞쪽으로 다시 떠내려온다 (뒤로 돌아갈 필요 없이 다시 주울 수 있다)
+const _tp = new THREE.Vector3(), _tt = new THREE.Vector3(), _ts = new THREE.Vector3();
+function driftTrashAhead(tr) {
+  let u = DIVE.u + (45 + Math.random() * 30 + ((DIVE.driftSeq = (DIVE.driftSeq || 0) + 1) % 4) * 14) / PATH_LEN;
+  for (let k = 0; k < 8 && SEA_SPOTS.some((sp) => !sp.found && Math.abs((((sp.u - u) % 1) + 1.5) % 1 - 0.5) < 0.02); k++) u += 0.012;
+  pathFrame(u, _tp, _tt, _ts);
+  tr.base.copy(_tp).addScaledVector(_ts, -(Math.random() * 2 - 1) * 7); tr.base.y += -3 + Math.random() * 5;
+  tr.base.y = Math.min(Math.max(tr.base.y, groundY(tr.base.x, tr.base.z) + 2.2), -3.5);
+  tr.u = u; tr.fadeT = 0; tr.g.scale.setScalar(0.01);
+}
 
 // 물고기 떼
 const SCHOOL_N = 70;
@@ -3015,6 +3034,12 @@ function updateDive(dt, active) {
       if (tr.gotT < 1) { tr.gotT = Math.min(1, tr.gotT + dt / 0.45); const k = tr.gotT; tr.g.position.lerpVectors(tr.base, _dv, k * k); tr.g.scale.setScalar(1.3 * (1 - k)); if (k >= 1) tr.g.visible = false; }
       continue;
     }
+    // 잠수부가 지나쳐 14m 넘게 멀어지면 앞쪽으로 다시 떠내려 보낸다 (u는 감지 않은 값이라 앞뒤가 분명하다)
+    if (moving && (DIVE.u - tr.u) * PATH_LEN > 14) {
+      driftTrashAhead(tr);
+      if (!DIVE.driftTold) { DIVE.driftTold = true; toast("놓친 쓰레기는 해류를 타고 앞쪽으로 다시 떠내려와요. 다시 주울 수 있어요!", 4200); }
+    }
+    if (tr.fadeT < 1) { tr.fadeT = Math.min(1, tr.fadeT + dt / 1.2); tr.g.scale.setScalar(1.3 * tr.fadeT); }
     tr.g.position.set(tr.base.x, tr.base.y + Math.sin(S.time * 0.9 + tr.ph) * 0.35, tr.base.z);
     tr.g.rotation.y += dt * 0.3; tr.g.rotation.x += dt * 0.12;
     if (moving && tr.g.position.distanceTo(_dv) < 3.2) pickTrash(tr);
