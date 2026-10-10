@@ -231,6 +231,28 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .sea-icons i { width: 32px; height: 32px; border-radius: 10px; border: 1.5px dashed rgba(132, 225, 214, .45); display: grid; place-items: center; color: rgba(132, 225, 214, .5); }
 .sea-icons i svg { width: 19px; height: 19px; }
 .sea-icons i.on { border-style: solid; background: rgba(132, 225, 214, .2); color: var(--teal); }
+.sea-icons i.pop { animation: icPop .55s var(--ease); }
+@keyframes icPop { 0% { transform: scale(1); } 40% { transform: scale(1.5); background: rgba(132, 225, 214, .6); } 100% { transform: scale(1); } }
+/* 오리발 힘차게 차기 버튼 */
+.kick-btn { position: fixed; right: 22px; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 8; width: 104px; height: 104px; border-radius: 50%; border: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #05272c; font: inherit; font-size: 13px; font-weight: 700; background: radial-gradient(circle at 35% 30%, #d6fff8, var(--teal) 58%, #2a9d92); box-shadow: 0 8px 24px rgba(0, 0, 0, .35), inset 0 -4px 0 rgba(0, 0, 0, .18); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; transition: transform .12s; }
+.kick-btn[hidden] { display: none; }
+.kick-btn svg { width: 34px; height: 34px; }
+.kick-btn kbd { font-family: var(--f-num); font-size: 10px; border: 1px solid rgba(5, 39, 44, .4); border-radius: 5px; padding: 0 5px; }
+.kick-btn.held { transform: scale(.92); }
+.kick-btn.kick { animation: kickRing .45s ease-out; }
+@keyframes kickRing { from { box-shadow: 0 0 0 0 rgba(132, 225, 214, .75), 0 8px 24px rgba(0, 0, 0, .35); } to { box-shadow: 0 0 0 26px rgba(132, 225, 214, 0), 0 8px 24px rgba(0, 0, 0, .35); } }
+@media (pointer: coarse) { .kick-btn kbd { display: none; } }
+/* 생물 발견 연출 */
+#discover { position: fixed; left: 50%; top: 26%; z-index: 9; text-align: center; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(.6); transition: opacity .3s, transform .5s var(--ease); }
+#discover.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.dc-kick { font-family: var(--f-num); letter-spacing: .2em; font-size: 14px; color: var(--teal); text-shadow: 0 2px 12px rgba(0, 0, 0, .7); }
+.dc-name { margin-top: 4px; font-family: var(--f-display); font-weight: 800; font-size: clamp(34px, 6vw, 56px); color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, .6), 0 0 30px rgba(132, 225, 214, .55); }
+@media (max-width: 560px) { #discover { top: 40%; } }
+.fly-ic { position: fixed; left: 0; top: 0; z-index: 9; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 16px; display: grid; place-items: center; background: rgba(132, 225, 214, .3); border: 2px solid var(--teal); color: #fff; pointer-events: none; transition: transform .7s cubic-bezier(.5, 0, .3, 1); }
+.fly-ic svg { width: 32px; height: 32px; }
+/* 바다 쓰레기 수거 글자 */
+.trash-pop { position: fixed; z-index: 9; pointer-events: none; white-space: nowrap; font-weight: 800; font-size: 18px; color: #ffe2a8; text-shadow: 0 2px 10px rgba(0, 0, 0, .8); animation: trashPop 1.1s ease-out forwards; }
+@keyframes trashPop { from { opacity: 0; transform: translate(-50%, -50%) scale(.7); } 20% { opacity: 1; transform: translate(-50%, -90%) scale(1.1); } to { opacity: 0; transform: translate(-50%, -190%) scale(1); } }
 .dv-up { margin-right: 114px; padding: 11px 18px; font-size: 15px; white-space: nowrap; }
 /* 좁은 화면: 일시정지·소리 버튼 아래 줄로 내려서 왼쪽 수심판이 찌그러지지 않게 */
 @media (max-width: 560px) { .dv-up { position: fixed; top: calc(72px + env(safe-area-inset-top, 0px)); right: 16px; margin-right: 0; } .dv-gauge { max-width: calc(100vw - 196px); } }
@@ -545,15 +567,21 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
     <div class="dist-val" id="depthVal">18<small>m</small></div>
     <div class="g-row"><span>바닷속 도감 <b id="seaCount">0 / 6</b></span></div>
     <div class="sea-icons" id="seaIcons"></div>
+    <div class="g-row"><span>바다 쓰레기 <b id="trashCount">0 / 12</b></span></div>
   </div>
   <button class="btn ghost dv-up" id="surfaceBtn" type="button">물 위로 올라가기</button>
 </div>
 <div class="hint out" id="diveHint" hidden>
   <span class="k"><kbd>←</kbd><kbd>→</kbd>좌우</span>
   <span class="k"><kbd>↑</kbd><kbd>↓</kbd>위아래</span>
-  <span class="t">화면을 끌어서 위아래 좌우로 헤엄쳐요</span>
-  <span>반짝이는 곳을 찾아 헤엄쳐요</span>
+  <span class="k"><kbd>Space</kbd>힘차게 차기</span>
+  <span class="t">화면을 끌어서 헤엄치고, 오른쪽 버튼으로 힘차게 차요</span>
 </div>
+<button class="kick-btn" id="kickBtn" type="button" aria-label="오리발 힘차게 차기" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 2h6.8c.9 0 1.6.7 1.6 1.6V8l3.3 11.3c.3 1.1-.5 2.2-1.6 2.2h-3.6L12 19l-3.1 2.5H5.3c-1.1 0-1.9-1.1-1.6-2.2L7 8V3.6C7 2.7 7.7 2 8.6 2z" fill="currentColor"/><path d="M9.2 4.6h5.6M12 10v7.6M9.4 10.6l-1.9 8M14.6 10.6l1.9 8" stroke="#d6fff8" stroke-width="1.3" stroke-linecap="round" fill="none" opacity=".75"/></svg>
+  <span>힘차게 차기</span><kbd>Space</kbd>
+</button>
+<div id="discover" aria-live="polite"><div class="dc-kick">새로운 생물 발견!</div><div class="dc-name"></div></div>
 <div id="record" class="modal" hidden></div>
 
 <section id="explore" class="layer out" hidden>
@@ -832,6 +860,7 @@ const Snd = {
   arp(notes, step = 0.09, vol = 0.07) { if (!this.ctx) return; const t = this.ctx.currentTime; notes.forEach((n, i) => this.pluck(n, t + i * step, vol, 2.8)); },
   chime() { this.arp([587.33, 739.99, 880, 1174.66]); },
   good() { this.arp([659.25, 880, 1318.5], 0.08, 0.06); },
+  pick() { this.arp([987.77, 1318.5], 0.06, 0.05); },
   bad() { this.arp([311.13, 293.66], 0.14, 0.06); },
   swell() { if (!this.ctx) return; [146.83, 220, 293.66, 369.99, 440].forEach((n) => this.pluck(n, this.ctx.currentTime + Math.random() * 0.3, 0.05, 6)); },
   gull() {
@@ -2334,7 +2363,7 @@ const SEA_ICON = {
 const floorY = (x, z) => -26 + 2.5 * Math.sin(x * 0.05) * Math.cos(z * 0.045) + 1.5 * Math.sin((x + z) * 0.11);
 const groundY = (x, z) => Math.max(floorY(x, z), W.heightAt(x, z), E.heightAt(x, z));
 const under = new THREE.Group(); under.visible = false; scene.add(under);
-const DIVE = { u: 0.02, ox: 0, oy: 0, vx: 0, vy: 0, speed: 7, breathT: 2, burst: 0, keys: { l: 0, r: 0, u: 0, d: 0 }, touch: { x: 0, y: 0 }, bubbleT: 0, sndT: 0, ghostT: -1, done: false, first: true };
+const DIVE = { u: 0.02, ox: 0, oy: 0, vx: 0, vy: 0, speed: 7, surge: 0, kickCd: 0, kickHeld: false, kickPulse: 0, kickPh: 0, reveal: null, trash: 0, breathT: 2, burst: 0, keys: { l: 0, r: 0, u: 0, d: 0 }, touch: { x: 0, y: 0 }, bubbleT: 0, sndT: 0, ghostT: -1, done: false, first: true };
 
 // 잠수 길: 독도 둘레의 바닷속 비탈을 따라 한 바퀴
 const DIVE_PATH = (() => {
@@ -2520,10 +2549,69 @@ function buildCreature(s) {
     }
   }
   g.position.copy(p); under.add(g);
+  // 발견했을 때 반응하는 생물들(새우·전복·해삼·혹돔·성게)
+  const H = { shrimp: [0.9, 1.2], abalone: [0.6, 0.5], cucumber: [0.45, 0.4], fish: [0.9, 0], urchin: [0.4, 0.3] }[s.id] || [0, 0];
+  s.actors = g.children.filter((o) => o.isGroup).map((o) => ({ o, y: o.position.y, ry: o.rotation.y, sc: o.scale.x, h: H[0], spin: H[1], fish: o === s.fishModel }));
   const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: "#9ff3ff", transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
   glow.position.set(p.x, p.y + 3.5, p.z); glow.scale.set(6, 6, 1); under.add(glow); s.glow = glow;
 }
 SEA_SPOTS.forEach(buildCreature);
+
+// 바다 쓰레기: 생물 사이사이에 떠 있다. 헤엄쳐 가서 닿으면 줍는다
+const TRASH_KIND = [
+  { id: "net", name: "폐그물" }, { id: "bag", name: "비닐봉지" }, { id: "bottle", name: "페트병" },
+  { id: "buoy", name: "스티로폼 부표" }, { id: "can", name: "캔" }, { id: "rope", name: "밧줄" },
+];
+const TRASH = (() => {
+  const r = rng(523), out = [];
+  const M = (c, o = {}) => patchUnder(new THREE.MeshStandardMaterial({ color: c, roughness: 0.6, ...o }));
+  const make = (kind) => {
+    const g = new THREE.Group();
+    if (kind === "net") {
+      const n = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), M("#4f9f7a", { wireframe: true })); n.scale.set(1.3, 0.7, 1); g.add(n);
+      const n2 = n.clone(); n2.scale.set(0.9, 0.9, 1.2); n2.rotation.set(0.6, 0.4, 0); g.add(n2);
+      const fl = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 8), M("#ef7d1e")); fl.position.set(0.9, 0.4, 0); g.add(fl);
+    } else if (kind === "bag") {
+      const geo = new THREE.PlaneGeometry(1.1, 1.4, 6, 6), P = geo.attributes.position;
+      for (let i = 0; i < P.count; i++) P.setZ(i, Math.sin(P.getX(i) * 3.1) * 0.12 + Math.cos(P.getY(i) * 2.7) * 0.1);
+      geo.computeVertexNormals(); g.add(new THREE.Mesh(geo, M("#e8eef2", { transparent: true, opacity: 0.72, side: THREE.DoubleSide, roughness: 0.3 })));
+    } else if (kind === "bottle") {
+      const glass = M("#b8e6f0", { transparent: true, opacity: 0.55, roughness: 0.15 });
+      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.75, 14), glass); b.rotation.z = Math.PI / 2; g.add(b);
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.2, 0.2, 12), glass); neck.rotation.z = -Math.PI / 2; neck.position.x = 0.47; g.add(neck);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.1, 10), M("#2f6bd8")); cap.rotation.z = Math.PI / 2; cap.position.x = 0.62; g.add(cap);
+      const lab = new THREE.Mesh(new THREE.CylinderGeometry(0.226, 0.226, 0.3, 14, 1, true), M("#e5483b", { side: THREE.DoubleSide })); lab.rotation.z = Math.PI / 2; g.add(lab);
+    } else if (kind === "buoy") {
+      const b = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 0), M("#f3f1ea", { flatShading: true, roughness: 0.95 })); b.scale.set(1.5, 0.9, 1.05); g.add(b);
+    } else if (kind === "can") {
+      const c = new THREE.Group(); c.rotation.z = 0.6; g.add(c);
+      c.add(new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.5, 14), M("#d23a36", { metalness: 0.5, roughness: 0.35 })));
+      const top = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.02, 14), M("#c9ced6", { metalness: 0.8, roughness: 0.3 })); top.position.y = 0.26; c.add(top);
+    } else {
+      const pts = []; for (let k = 0; k < 6; k++) pts.push(new THREE.Vector3((k - 2.5) * 0.35, Math.sin(k * 1.7) * 0.3, Math.cos(k * 1.3) * 0.3));
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 30, 0.06, 6), M("#e2a21a", { roughness: 0.9 })));
+    }
+    g.scale.setScalar(1.3);
+    return g;
+  };
+  // 마지막 생물(u 0.85) 앞까지 고르게, 좌우·위아래로 흩어 놓아 조종할 이유를 만든다
+  const N = 12, P = new THREE.Vector3(), T = new THREE.Vector3(), Sd = new THREE.Vector3();
+  for (let i = 0; i < N; i++) {
+    let u = 0.035 + ((i + 0.5) / N) * 0.79;
+    while (SEA_SPOTS.some((sp) => Math.abs(sp.u - u) < 0.025)) u += 0.012;
+    pathFrame(u, P, T, Sd);
+    const ox = (r() * 2 - 1) * 8, pos = P.clone().addScaledVector(Sd, -ox);
+    pos.y += -4 + r() * 6;
+    pos.y = Math.min(Math.max(pos.y, groundY(pos.x, pos.z) + 2.2), -3.5);
+    const kind = TRASH_KIND[i % TRASH_KIND.length], g = make(kind.id);
+    g.position.copy(pos); g.rotation.set(r() * 6, r() * 6, r() * 6); under.add(g);
+    // 멀리서도 눈에 띄게 은은한 주황 빛
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: "#ffcf8a", transparent: true, opacity: 0.4, depthWrite: false, blending: THREE.AdditiveBlending }));
+    glow.scale.set(2.8, 2.8, 1); g.add(glow);
+    out.push({ ...kind, u, g, base: pos.clone(), ph: r() * 6.28, got: false, gotT: 0 });
+  }
+  return out;
+})();
 
 // 물고기 떼
 const SCHOOL_N = 70;
@@ -2745,7 +2833,7 @@ function updateLions(dt, canSpawn) {
     LIONS.curve.getPointAt(u, _lp); LIONS.curve.getTangentAt(u, _lt);
     _lp.add(diver.position).add(l.userData.off);
     l.position.copy(_lp);
-    _lt.multiplyScalar(LIONS.curve.getLength() / LIONS.dur).addScaledVector(LIONS.T0, DIVE.speed);
+    _lt.multiplyScalar(LIONS.curve.getLength() / LIONS.dur).addScaledVector(LIONS.T0, DIVE.speed + DIVE.surge);
     l.lookAt(_lp.addScaledVector(_lt.normalize(), 2));
     l.rotateZ(Math.sin(S.time * 0.9 + l.userData.phase) * 0.35);
     animateLion(l, S.time);
@@ -2790,9 +2878,9 @@ async function enterDive() {
   camera.position.copy(_P).addScaledVector(_T, -8).add(new THREE.Vector3(0, 3, 0)); camLook.copy(_P);
   diveHud.hidden = false; requestAnimationFrame(() => diveHud.classList.remove("out"));
   diveHint.hidden = false; diveHint.classList.remove("out"); setTimeout(() => diveHint.classList.add("out"), 9000);
-  updateSeaUI();
+  updateSeaUI(); updateTrashUI();
   await fadeTo(false);
-  if (DIVE.first) { DIVE.first = false; caption('<div class="c-kick">독도 바닷속 · 수심 18m</div><div class="c-big">바닷속 탐사 시작!</div><div class="c-small">반짝이는 곳을 찾아 헤엄쳐 가 보세요. 독도 바다에 사는 생물들을 만날 수 있어요.</div>', 5200); }
+  if (DIVE.first) { DIVE.first = false; caption('<div class="c-kick">독도 바닷속 · 수심 18m</div><div class="c-big">바닷속 탐사 시작!</div><div class="c-small">반짝이는 곳에서 독도 바다 생물을 만나고, 떠다니는 바다 쓰레기도 주워 보세요.</div>', 5200); }
 }
 async function exitDive() {
   if (!(S.state === "dive" || S.state === "diveEnd")) return;
@@ -2810,13 +2898,48 @@ async function exitDive() {
 }
 function collectSea(s) {
   s.found = true; s.glow.visible = false; S.sea.add(s.id); updateSeaUI();
-  Snd.chime(); S.state = "diveCard";
+  S.state = "diveCard";
   setTimeout(() => openNote(s, { n: S.sea.size, total: SEA.length, next: S.sea.size === SEA.length ? "계속하기" : "계속 헤엄치기", onDone: () => {
     if (S.sea.size === SEA.length && !DIVE.done) { DIVE.done = true; DIVE.ghostT = 0; S.state = "diveEnd"; ghost.visible = true; Snd.swell();
-      caption('<div class="c-kick">강치의 기억</div><div class="c-big">언젠가 다시, 강치가 돌아올 수 있도록</div><div class="c-small">옛날 독도 바다를 누비던 강치는 이제 볼 수 없어요. 독도의 바다를 깨끗하게 지키는 것도 독도 지킴이의 일이에요.</div>', 7600);
+      caption('<div class="c-kick">강치의 기억</div><div class="c-big">언젠가 다시, 강치가 돌아올 수 있도록</div><div class="c-small">옛날 독도 바다를 누비던 강치는 이제 볼 수 없어요. 독도의 바다를 깨끗하게 지키는 것도 독도 지킴이의 일이에요.' + (DIVE.trash ? ` 오늘 바다 쓰레기 ${DIVE.trash}개를 주웠어요!` : "") + '</div>', 7600);
       setTimeout(() => { $("#surfaceBtn").classList.add("glow"); }, 3000);
     } else S.state = "dive";
-  } }), 500);
+  } }), 120);
+}
+function startReveal(s) {
+  s.found = true; S.state = "diveCard"; DIVE.reveal = { s, t: 0, flown: false }; DIVE.kickHeld = false;
+  Snd.chime(); setTimeout(() => Snd.bubble(), 140); setTimeout(() => Snd.bubble(), 280);
+  for (let n = 0; n < 26; n++) emitBubble(_look.copy(s.pos).add(new THREE.Vector3((Math.random() - 0.5) * 3, 0.5 + Math.random() * 1.5, (Math.random() - 0.5) * 3)));
+  const dc = $("#discover"); dc.querySelector(".dc-name").textContent = s.year; dc.classList.add("show");
+}
+// 도감 아이콘이 생물 자리에서 왼쪽 위 도감 칸으로 날아가 꽂힌다
+function flyIcon(s) {
+  const p = project(_look.copy(s.pos).add(new THREE.Vector3(0, 1.5, 0)));
+  const slot = document.querySelector(`#seaIcons i[data-id="${s.id}"]`);
+  const done = () => { S.sea.add(s.id); updateSeaUI(); if (slot) { slot.classList.remove("pop"); void slot.offsetWidth; slot.classList.add("pop"); } Snd.pick(); };
+  if (!slot || !p.ok) { done(); return; }
+  const r = slot.getBoundingClientRect(), el = document.createElement("div");
+  el.className = "fly-ic"; el.innerHTML = SEA_ICON[s.id];
+  el.style.transform = `translate(${p.x}px, ${p.y}px) scale(1.4)`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transform = `translate(${r.left + r.width / 2}px, ${r.top + r.height / 2}px) scale(.6)`; }));
+  setTimeout(() => { el.remove(); done(); }, 760);
+}
+function pickTrash(tr) {
+  tr.got = true; tr.gotT = 0; tr.base.copy(tr.g.position); DIVE.trash++;
+  updateTrashUI(); Snd.pick(); Snd.bubble();
+  const p = project(_look.copy(tr.g.position));
+  if (p.ok) { const el = document.createElement("div"); el.className = "trash-pop"; el.textContent = `${tr.name} 수거!`; el.style.left = p.x + "px"; el.style.top = p.y + "px"; document.body.appendChild(el); setTimeout(() => el.remove(), 1200); }
+  if (DIVE.trash === 1) caption('<div class="c-kick">바다 쓰레기 수거</div><div class="c-big">바다 쓰레기를 주웠어요!</div><div class="c-small">버려진 그물과 비닐은 바다 생물의 몸에 감기거나, 먹이로 잘못 삼켜져 생물을 아프게 해요. 보이는 대로 주워 주세요.</div>', 5600);
+  else if (DIVE.trash === TRASH.length) caption('<div class="c-kick">바다 지킴이</div><div class="c-big">바다 쓰레기를 모두 주웠어요!</div><div class="c-small">독도 바다가 한결 깨끗해졌어요.</div>', 4200);
+}
+function updateTrashUI() { $("#trashCount").textContent = `${DIVE.trash} / ${TRASH.length}`; }
+function diveKick() {
+  if (S.state !== "dive" || S.paused || DIVE.kickCd > 0) return;
+  DIVE.surge = Math.min(DIVE.surge + 7, 12); DIVE.kickCd = 0.42; DIVE.kickPulse = 1;
+  Snd.whoosh();
+  for (const L of diver.userData.legs) { L.ankle.getWorldPosition(_look); for (let n = 0; n < 6; n++) emitBubble(_look); }
+  kickBtn.classList.remove("kick"); void kickBtn.offsetWidth; kickBtn.classList.add("kick");
 }
 const _dv = new THREE.Vector3(), _look = new THREE.Vector3();
 function updateDive(dt, active) {
@@ -2851,8 +2974,13 @@ function updateDive(dt, active) {
   }
   if (!moving) { wantVx = 0; wantVy = 0; }
   DIVE.vx = damp(DIVE.vx, wantVx, 3.2, dt); DIVE.vy = damp(DIVE.vy, wantVy, 3.2, dt);
+  // 오리발 힘차게 차기: 한 번 찰 때마다 속도가 확 붙었다가 서서히 줄어든다
+  DIVE.kickCd = Math.max(0, DIVE.kickCd - dt);
+  if (DIVE.kickHeld && moving) diveKick();
+  DIVE.surge = damp(DIVE.surge, 0, 1.3, dt); DIVE.kickPulse = Math.max(0, DIVE.kickPulse - dt * 2.2);
+  const spd = DIVE.speed + DIVE.surge;
   if (moving) {
-    DIVE.u += (DIVE.speed * dt) / PATH_LEN;
+    DIVE.u += (spd * dt) / PATH_LEN;
     DIVE.ox += DIVE.vx * dt; DIVE.oy += DIVE.vy * dt;
     if (Math.abs(DIVE.ox) > 13) { DIVE.ox = clamp(DIVE.ox, -13, 13); DIVE.vx = 0; }
     if (DIVE.oy > 6 || DIVE.oy < -13) { DIVE.oy = clamp(DIVE.oy, -13, 6); DIVE.vy = 0; }
@@ -2863,22 +2991,48 @@ function updateDive(dt, active) {
   if (_dv.y > -2.5) { _dv.y = -2.5; DIVE.oy = _dv.y - _P.y; DIVE.vy = Math.min(DIVE.vy, 0); }
   diver.position.copy(_dv);
   // 몸은 나아가는 방향을 향해 천천히 돌고, 옆으로 움직이면 그쪽으로 기운다
-  const vel = _T.clone().multiplyScalar(moving ? DIVE.speed : 1).addScaledVector(_S, -DIVE.vx).add(new THREE.Vector3(0, DIVE.vy, 0));
+  const vel = _T.clone().multiplyScalar(moving ? spd : 1).addScaledVector(_S, -DIVE.vx).add(new THREE.Vector3(0, DIVE.vy, 0));
   const mtx = new THREE.Matrix4().lookAt(new THREE.Vector3(), vel.normalize().negate(), UP);
   const qWant = new THREE.Quaternion().setFromRotationMatrix(mtx);
   qWant.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), clamp(DIVE.vx * 0.06, -0.5, 0.5)));
   diver.quaternion.slerp(qWant, 1 - Math.exp(-4 * dt));
   // 발차기: 엉덩이 → 무릎 → 발목 순서로 늦게 따라와 물결치듯 움직인다
-  const w = 5.2, t = S.time, kickAmp = moving ? 1 : 0.45, ud = diver.userData;
+  const t = S.time, ud = diver.userData;
+  DIVE.kickPh += dt * (moving ? 5.2 + DIVE.surge * 0.45 : 3.2);
+  const KP = DIVE.kickPh, kickAmp = (moving ? 1 : 0.45) * (1 + DIVE.kickPulse * 0.8);
   for (const L of ud.legs) {
     const ph = L.sx > 0 ? 0 : Math.PI;
-    L.hip.rotation.x = Math.sin(t * w + ph) * 0.3 * kickAmp;
-    L.knee.rotation.x = (0.25 + Math.sin(t * w + ph - 0.9) * 0.28) * kickAmp;
-    L.ankle.rotation.x = Math.sin(t * w + ph - 1.7) * 0.35 * kickAmp;
+    L.hip.rotation.x = Math.sin(KP + ph) * 0.3 * kickAmp;
+    L.knee.rotation.x = (0.25 + Math.sin(KP + ph - 0.9) * 0.28) * kickAmp;
+    L.ankle.rotation.x = Math.sin(KP + ph - 1.7) * 0.35 * kickAmp;
   }
   for (const A of ud.arms) { A.sh.rotation.x = -0.3 + Math.sin(t * 1.3 + A.sx) * 0.06; A.el.rotation.x = 0.1 + Math.sin(t * 1.1 + A.sx) * 0.05; A.hand.rotation.x = Math.sin(t * 0.9 + A.sx * 2) * 0.12; A.fingers.forEach((f, i) => { f.rotation.x = -0.18 - i * 0.03 + Math.sin(t * 0.8 + i * 0.4 + A.sx) * 0.08; }); }
-  ud.body.rotation.z = Math.sin(t * w) * 0.035; ud.body.position.y = Math.sin(t * 1.2) * 0.04;
-  if (moving) for (const s of SEA_SPOTS) if (!s.found && s.pos.distanceTo(_dv) < 6.5) { collectSea(s); break; }
+  ud.body.rotation.z = Math.sin(KP) * 0.035; ud.body.position.y = Math.sin(t * 1.2) * 0.04;
+  if (moving) for (const s of SEA_SPOTS) if (!s.found && s.pos.distanceTo(_dv) < 8) { startReveal(s); break; }
+  // 바다 쓰레기: 둥실둥실 떠 있다가 닿으면 잠수부 쪽으로 빨려 들어오며 사라진다
+  for (const tr of TRASH) {
+    if (tr.got) {
+      if (tr.gotT < 1) { tr.gotT = Math.min(1, tr.gotT + dt / 0.45); const k = tr.gotT; tr.g.position.lerpVectors(tr.base, _dv, k * k); tr.g.scale.setScalar(1.3 * (1 - k)); if (k >= 1) tr.g.visible = false; }
+      continue;
+    }
+    tr.g.position.set(tr.base.x, tr.base.y + Math.sin(S.time * 0.9 + tr.ph) * 0.35, tr.base.z);
+    tr.g.rotation.y += dt * 0.3; tr.g.rotation.x += dt * 0.12;
+    if (moving && tr.g.position.distanceTo(_dv) < 3.2) pickTrash(tr);
+  }
+  // 생물 발견 연출: 빛이 퍼지고, 생물이 반응하고, 도감 아이콘이 날아가 꽂힌 뒤 카드가 열린다
+  const RV = DIVE.reveal;
+  if (RV) {
+    RV.t += dt; const s = RV.s, gk = Math.min(1, RV.t / 0.9);
+    s.glow.scale.set(5 + gk * 9, 5 + gk * 9, 1); s.glow.material.opacity = 1 - gk; if (gk >= 1) s.glow.visible = false;
+    s.actors.forEach((a, i) => {
+      const k = clamp((RV.t - 0.15 - i * 0.12) / 0.7, 0, 1), hop = Math.sin(k * Math.PI);
+      if (a.fish) a.o.position.y += hop * a.h;
+      else { a.o.position.y = a.y + hop * a.h; a.o.rotation.y = a.ry + hop * a.spin; }
+      a.o.scale.setScalar(a.sc * (1 + hop * 0.15));
+    });
+    if (RV.t > 1.05 && !RV.flown) { RV.flown = true; flyIcon(s); }
+    if (RV.t > 2.0) { DIVE.reveal = null; $("#discover").classList.remove("show"); collectSea(s); }
+  }
   // 강치 무리 이벤트
   updateLions(dt, moving);
   // 강치의 기억 장면
@@ -2890,11 +3044,26 @@ function updateDive(dt, active) {
     animateLion(ghost, S.time);
   }
   // 카메라
-  const camT = _dv.clone().addScaledVector(_T, -6.8 * portraitK(0.4)).add(new THREE.Vector3(0, 2.2, 0)).addScaledVector(_S, -1.4 / portraitK(1));
-  camera.position.lerp(camT, 1 - Math.exp(-3 * dt));
-  camLook.lerp(_dv.clone().addScaledVector(_T, 5), 1 - Math.exp(-4 * dt));
+  let camT, lookT;
+  if (DIVE.reveal) {
+    // 발견한 생물 쪽으로 카메라가 다가가 바라본다
+    // 잠수부와 생물을 잇는 선의 옆쪽(트인 쪽)에서 둘을 함께 비춘다
+    const RV2 = DIVE.reveal, c = RV2.s.pos.clone().add(new THREE.Vector3(0, 1.2, 0));
+    if (!RV2.cam) {
+      const dir = _dv.clone().sub(c); dir.y = 0; dir.normalize();
+      const pk = portraitK(0.5), side = new THREE.Vector3(-dir.z, 0, dir.x), cand = [1, -1].map((k) => c.clone().addScaledVector(dir, 6 * pk).addScaledVector(side, 7.5 * k * pk).add(new THREE.Vector3(0, 5, 0)));
+      RV2.cam = cand.sort((p, q) => groundY(p.x, p.z) - groundY(q.x, q.z))[0];
+      RV2.cam.y = Math.min(Math.max(RV2.cam.y, groundY(RV2.cam.x, RV2.cam.z) + 2.5), -1.5);
+    }
+    camT = RV2.cam; lookT = c.clone().lerp(_dv, 0.4);
+  } else {
+    camT = _dv.clone().addScaledVector(_T, -(6.8 + DIVE.surge * 0.12) * portraitK(0.4)).add(new THREE.Vector3(0, 2.2, 0)).addScaledVector(_S, -1.4 / portraitK(1));
+    lookT = _dv.clone().addScaledVector(_T, 5);
+  }
+  camera.position.lerp(camT, 1 - Math.exp(-(DIVE.reveal ? 2.2 : 3) * dt));
+  camLook.lerp(lookT, 1 - Math.exp(-4 * dt));
   camera.lookAt(camLook);
-  camera.fov = damp(camera.fov, 58, 2, dt); camera.updateProjectionMatrix();
+  camera.fov = damp(camera.fov, 58 + DIVE.surge * 0.9, 3, dt); camera.updateProjectionMatrix();
   // 거품
   // 숨을 내쉴 때마다 호흡기에서 거품이 한 무더기씩 올라간다
   DIVE.breathT -= dt;
@@ -2973,8 +3142,8 @@ function openFinale() {
       <div class="c-no">${no}</div>
       <h2 id="certTitle">임명장</h2>
       <div class="name-row"><label for="certName">이름</label><input id="certName" value="" placeholder="이름을 써 주세요" maxlength="10" autocomplete="off"></div>
-      <p>위 사람은 독도의 날을 맞아 울릉도에서 독도까지 87.4km의 새벽 바다를 건너, 유리병 속 열두 기록으로 독도의 역사와 자연을 배우고 독도 구석구석 여덟 곳과 바닷속까지 탐사하였기에 <b>독도 지킴이</b>로 임명합니다.</p>
-      <div class="stats"><span><b>${S.collected} / ${NREC}</b>유리병 기록</span><span><b>${S.stars} / ${S.quizzes}</b>퀴즈 정답</span><span><b>${S.spots.size} / ${SPOTS.length}</b>독도 도감</span><span><b>${S.sea.size} / ${SEA.length}</b>바닷속 도감</span></div>
+      <p>위 사람은 독도의 날을 맞아 울릉도에서 독도까지 87.4km의 새벽 바다를 건너, 유리병 속 열두 기록으로 독도의 역사와 자연을 배우고 독도 구석구석 여덟 곳과 바닷속까지 탐사${DIVE.trash ? `하고 바다 쓰레기 ${DIVE.trash}개를 주웠기에` : "하였기에"} <b>독도 지킴이</b>로 임명합니다.</p>
+      <div class="stats"><span><b>${S.collected} / ${NREC}</b>유리병 기록</span><span><b>${S.stars} / ${S.quizzes}</b>퀴즈 정답</span><span><b>${S.spots.size} / ${SPOTS.length}</b>독도 도감</span><span><b>${S.sea.size} / ${SEA.length}</b>바닷속 도감</span><span><b>${DIVE.trash} / ${TRASH.length}</b>바다 쓰레기</span></div>
       <div class="sign"><span>${date}</span><span>독도 원정대</span><span class="seal" aria-hidden="true">독도<br>지킴</span></div>
       <div class="acts"><button class="btn ghost" id="backExplore" type="button">독도 더 둘러보기</button><button class="btn" id="again" type="button">처음부터 다시</button></div>
       <div class="tip">이름을 쓰고 화면을 캡처하면 임명장을 간직할 수 있어요. · <button class="credit-link dark" id="creditBtn2" type="button">사진·영상 출처</button></div>
@@ -2992,12 +3161,15 @@ const keyMap = { ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "ri
 const diveKey = { ArrowLeft: "l", KeyA: "l", ArrowRight: "r", KeyD: "r", ArrowUp: "u", KeyW: "u", ArrowDown: "d", KeyS: "d" };
 addEventListener("keydown", (e) => {
   if (e.target.tagName === "INPUT") return;
+  if (S.state === "dive" && e.code === "Space") { e.preventDefault(); if (!e.repeat) { DIVE.kickHeld = true; diveKick(); } return; }
   if (S.state === "dive" && diveKey[e.code]) { DIVE.keys[diveKey[e.code]] = 1; e.preventDefault(); return; }
   const k = keyMap[e.code]; if (!k) { if (e.code === "Escape" && S.focus) closeSpot(); return; }
   if (S.state === "voyage") { keys[k] = true; e.preventDefault(); }
 });
-addEventListener("keyup", (e) => { const k = keyMap[e.code]; if (k) keys[k] = false; if (diveKey[e.code]) DIVE.keys[diveKey[e.code]] = 0; });
+addEventListener("keyup", (e) => { if (e.code === "Space") DIVE.kickHeld = false; const k = keyMap[e.code]; if (k) keys[k] = false; if (diveKey[e.code]) DIVE.keys[diveKey[e.code]] = 0; });
 addEventListener("blur", () => { keys.left = keys.right = keys.boost = false; });
+const kickBtn = $("#kickBtn");
+hold(kickBtn, () => { DIVE.kickHeld = true; diveKick(); }, () => { DIVE.kickHeld = false; });
 function hold(el, on, off) {
   el.addEventListener("pointerdown", (e) => { e.preventDefault(); el.setPointerCapture(e.pointerId); el.classList.add("held"); on(); });
   const end = () => { el.classList.remove("held"); off(); };
@@ -3094,6 +3266,7 @@ let last = performance.now(), perfAcc = 0, perfN = 0, perfDone = false, perfStag
 /* ---------- 일시정지 ---------- */
 const pauseBtn = $("#pauseBtn"), pauseMenu = $("#pauseMenu");
 function updatePauseVis() {
+  const kw = S.state === "dive" && !S.paused && !DIVE.reveal; if (kickBtn.hidden === kw) kickBtn.hidden = !kw;
   const want = ["intro", "voyage", "dive", "diveEnd", "explore"].includes(S.state) && ui.record.hidden && pauseMenu.hidden;
   if (pauseBtn.hidden === want) pauseBtn.hidden = !want;
 }
@@ -3102,6 +3275,7 @@ function setPaused(on) {
   if (Snd.master) Snd.master.gain.setTargetAtTime(on || !Snd.on ? 0 : 0.9, Snd.ctx.currentTime, 0.1);
   for (const k in keys) keys[k] = false;
   if (DIVE.keys) for (const k in DIVE.keys) DIVE.keys[k] = 0;
+  DIVE.kickHeld = false;
   if (typeof joyRelease === "function" && JOY.id !== null) joyRelease();
 }
 function openPause() {
@@ -3245,6 +3419,6 @@ setTimeout(async () => {
   await fadeTo(false);
 }, 400);
 
-window.__dokdo = { showCenterCta, openNote, SEA, SPOTS, openCredits, openPause, openSpot, collectSpot, LIONS, startLionPod, diver, isWebGL2, THREE, scene, school, rays, ghost, under, S, STORM, STORM_Z, bottles, DIVE, SEA_SPOTS, enterDive, exitDive, camera, boat, setSun, placeBoat, skipToExplore, startVoyage, openFinale, openSpot, collectSpot, startArrival, openRecord, openVideo };
+window.__dokdo = { TRASH, diveKick, showCenterCta, openNote, SEA, SPOTS, openCredits, openPause, openSpot, collectSpot, LIONS, startLionPod, diver, isWebGL2, THREE, scene, school, rays, ghost, under, S, STORM, STORM_Z, bottles, DIVE, SEA_SPOTS, enterDive, exitDive, camera, boat, setSun, placeBoat, skipToExplore, startVoyage, openFinale, openSpot, collectSpot, startArrival, openRecord, openVideo };
 }
 </script>
