@@ -48,6 +48,19 @@ npm run build
 
 이후 `main` 브랜치에 바뀐 내용이 합쳐지면 자동으로 다시 배포됩니다. `index.html`과 `vendor/`는 빌드 결과를 커밋해 두므로 Cloudflare에서 따로 빌드할 필요가 없어요.
 
+## 학습지·문제 모음집 (한글 hwpx)
+
+- `worksheets/독도원정대_학습지.hwpx` — 학생용 활동지 A4 2쪽 (빈칸·사진 퀴즈·역사 연표 잇기·O/X·생각 쓰기, 실제 사진과 출처 포함)
+- `worksheets/독도원정대_문제모음집_정답.hwpx` — 게임 속 퀴즈 19문제 전체와 정답·해설, 학습지 정답
+- 게임 문제를 고친 뒤 다시 만들려면(파이썬 3.10+):
+
+```sh
+pip install python-hwpx pillow
+node tools/worksheets/extract_quiz.mjs quiz.json
+python tools/worksheets/make_worksheet.py worksheets/독도원정대_학습지.hwpx
+python tools/worksheets/make_collection.py worksheets/독도원정대_문제모음집_정답.hwpx quiz.json
+```
+
 ## 사진·영상
 
 - 기록 카드와 탐사 설명에 실제 사진이 함께 나옵니다. 사진은 `assets/photos/`에 있고, 출처와 라이선스는 [CREDITS.md](CREDITS.md)와 게임 안 '사진·영상 출처' 화면에 있습니다.
