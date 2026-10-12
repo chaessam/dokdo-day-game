@@ -51,6 +51,7 @@ npm run build
 ## 학습지·문제 모음집 (한글 hwpx)
 
 - `worksheets/독도원정대_학습지.hwpx` — 학생용 활동지 A4 2쪽 (빈칸·사진 퀴즈·역사 연표 잇기·O/X·생각 쓰기, 실제 사진과 출처 포함)
+- `worksheets/독도원정대_학습지_정답.hwpx` — 학습지와 같은 모양에 정답을 빨간 글씨로 채운 교사용 정답지
 - `worksheets/독도원정대_문제모음집_정답.hwpx` — 게임 속 퀴즈 19문제 전체와 정답·해설, 학습지 정답
 - 게임 문제를 고친 뒤 다시 만들려면(파이썬 3.10+):
 
@@ -58,6 +59,7 @@ npm run build
 pip install python-hwpx pillow
 node tools/worksheets/extract_quiz.mjs quiz.json
 python tools/worksheets/make_worksheet.py worksheets/독도원정대_학습지.hwpx
+python tools/worksheets/make_worksheet.py worksheets/독도원정대_학습지_정답.hwpx --answers
 python tools/worksheets/make_collection.py worksheets/독도원정대_문제모음집_정답.hwpx quiz.json
 ```
 
