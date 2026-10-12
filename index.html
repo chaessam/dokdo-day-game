@@ -1649,6 +1649,17 @@ input:focus-visible {
 .doc .btn[hidden] {
   display: none;
 }
+.doc .btn.wait {
+  cursor: default;
+  color: #5b4a2c;
+  background:
+    linear-gradient(
+      90deg,
+      var(--gold) var(--fill, 0%),
+      rgba(255, 197, 110, .35) var(--fill, 0%));
+  box-shadow: none;
+  transform: none;
+}
 #explore {
   transition: opacity .8s ease;
 }
@@ -4656,8 +4667,26 @@ function boot() {
       updateHudStatic();
       const nx = $("#docNext");
       nx.hidden = false;
-      nx.focus({ preventScroll: true });
       nx.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      const WAIT = 7, t0 = Date.now();
+      nx.disabled = true;
+      nx.classList.add("wait");
+      const tick = () => {
+        const left = WAIT - (Date.now() - t0) / 1e3;
+        if (!nx.isConnected) return;
+        if (left <= 0) {
+          nx.disabled = false;
+          nx.classList.remove("wait");
+          nx.style.removeProperty("--fill");
+          nx.textContent = opts.next;
+          nx.focus({ preventScroll: true });
+          return;
+        }
+        nx.style.setProperty("--fill", ((1 - left / WAIT) * 100).toFixed(1) + "%");
+        nx.textContent = "풀이를 읽어 보세요 · ".concat(Math.ceil(left));
+        requestAnimationFrame(tick);
+      };
+      tick();
     }));
     $("#docNext").addEventListener("click", () => {
       var _a3;
