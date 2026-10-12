@@ -329,6 +329,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .why b { color: var(--hanji-ink); }
 .doc .btn { align-self: flex-end; }
 .doc .btn[hidden] { display: none; }
+.doc .btn.wait { cursor: default; color: #5b4a2c; background: linear-gradient(90deg, var(--gold) var(--fill, 0%), rgba(255, 197, 110, .35) var(--fill, 0%)); box-shadow: none; transform: none; }
 
 /* 탐사 */
 #explore { transition: opacity .8s ease; }
@@ -2118,7 +2119,19 @@ function openNote(r, opts) {
     else { btn.classList.add("wrong"); Snd.bad(); $("#why").innerHTML = "아쉬워요. 정답은 <b>" + r.quiz.a[r.quiz.c] + "</b>. " + r.quiz.why; }
     S.quizzes++;
     updateHudStatic();
-    const nx = $("#docNext"); nx.hidden = false; nx.focus({ preventScroll: true }); nx.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    const nx = $("#docNext"); nx.hidden = false; nx.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    // 풀이를 읽도록 7초 동안은 다음으로 넘어갈 수 없다 (버튼이 차오르며 남은 초를 보여 준다)
+    const WAIT = 7, t0 = Date.now();
+    nx.disabled = true; nx.classList.add("wait");
+    const tick = () => {
+      const left = WAIT - (Date.now() - t0) / 1000;
+      if (!nx.isConnected) return;
+      if (left <= 0) { nx.disabled = false; nx.classList.remove("wait"); nx.style.removeProperty("--fill"); nx.textContent = opts.next; nx.focus({ preventScroll: true }); return; }
+      nx.style.setProperty("--fill", ((1 - left / WAIT) * 100).toFixed(1) + "%");
+      nx.textContent = `풀이를 읽어 보세요 · ${Math.ceil(left)}`;
+      requestAnimationFrame(tick);
+    };
+    tick();
   }));
   $("#docNext").addEventListener("click", () => { ui.record.hidden = true; opts.onDone?.(); });
   if (opts.review) {
