@@ -55,12 +55,21 @@ const statsOf = (env) => env.STATS.get(env.STATS.idFromName("main"));
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
-    if (url.pathname === "/api/stats" && req.method === "GET") return json(await statsOf(env).stats());
-    if (url.pathname === "/api/play" && req.method === "POST") {
-      const body = await req.json().catch(() => ({}));
-      const id = String((body && body.id) || "");
-      if (!ID_RE.test(id)) return json({ error: "bad id" }, 400);
-      return json(await statsOf(env).play(id, req.headers.get("cf-connecting-ip") || "unknown"));
+    if (url.pathname.startsWith("/api/")) {
+      // 통계가 고장 나도 게임은 그대로 돌아가도록, 오류는 JSON으로만 알린다
+      try {
+        if (!env.STATS) return json({ error: "STATS binding missing" }, 503);
+        if (url.pathname === "/api/stats" && req.method === "GET") return json(await statsOf(env).stats());
+        if (url.pathname === "/api/play" && req.method === "POST") {
+          const body = await req.json().catch(() => ({}));
+          const id = String((body && body.id) || "");
+          if (!ID_RE.test(id)) return json({ error: "bad id" }, 400);
+          return json(await statsOf(env).play(id, req.headers.get("cf-connecting-ip") || "unknown"));
+        }
+        return json({ error: "not found" }, 404);
+      } catch (e) {
+        return json({ error: String((e && e.stack) || e) }, 500);
+      }
     }
     return env.ASSETS.fetch(req);
   },
