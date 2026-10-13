@@ -1,13 +1,19 @@
 {
-  // 클라우드플레어 Workers 설정 (정적 파일만 배포, 서버 코드 없음)
+  // 클라우드플레어 Workers 설정: 정적 파일 + 참여자 수를 세는 작은 서버(worker/index.js)
   // name은 클라우드플레어 대시보드의 Worker 이름(주소 맨 앞부분)과 같아야 해요.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "dokdo-day-game",
+  "main": "worker/index.js",
   "compatibility_date": "2025-09-01",
   // workers.dev 주소(dokdo-day-game.<계정>.workers.dev)를 켜 둔다
   "workers_dev": true,
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   },
+  "durable_objects": {
+    "bindings": [{ "name": "STATS", "class_name": "Stats" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Stats"] }],
   "observability": { "enabled": true }
 }

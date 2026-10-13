@@ -46,6 +46,8 @@ npm run build
 3. 프로젝트 이름은 `dokdo-day-game` (`wrangler.jsonc`의 name과 같아야 함), 빌드 명령은 비워 두고 배포 명령은 기본값 `npx wrangler deploy` 그대로 두고 **Deploy**
 4. 끝나면 `https://dokdo-day-game.<내 계정 subdomain>.workers.dev` 주소로 접속할 수 있어요.
 
+첫 화면의 "지금까지 N명이 독도 원정을 떠났어요"는 `worker/index.js`(Durable Object SQLite)가 셉니다. 로그인 없이 기기마다 무작위 번호를 만들어 '항해 시작'이나 '바로 독도 탐사하기'를 처음 누를 때 한 번 세고, 이름 같은 개인정보는 저장하지 않아요. 기기 수는 `GET /api/stats`로도 볼 수 있어요.
+
 이후 `main` 브랜치에 바뀐 내용이 합쳐지면 자동으로 다시 배포됩니다. `index.html`과 `vendor/`는 빌드 결과를 커밋해 두므로 Cloudflare에서 따로 빌드할 필요가 없어요.
 
 ## 학습지·문제 모음집 (한글 hwpx)

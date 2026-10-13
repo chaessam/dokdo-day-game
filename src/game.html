@@ -118,6 +118,9 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
 .t-lead { margin: 0; font-size: clamp(16px, 2.1vw, 19px); line-height: 1.75; color: #d6e0ee; max-width: 34em; }
 .t-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .t-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--dim); font-size: 14px; }
+.t-count { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(255, 197, 110, .14); box-shadow: inset 0 0 0 1px rgba(255, 197, 110, .35); color: #f3e3c4; font-size: 14px; }
+.t-count b { color: var(--gold); font-family: var(--f-num); font-weight: 600; font-size: 15px; }
+.t-count[hidden] { display: none; }
 .t-meta b { color: var(--text); font-weight: 500; font-family: var(--f-num); font-size: 13px; margin-right: 4px; }
 .t-date { position: absolute; right: max(16px, 5vw); bottom: calc(28px + env(safe-area-inset-bottom, 0px)); text-align: right; font-family: var(--f-display); color: rgba(255, 255, 255, .85); }
 .t-date strong { display: block; font-size: clamp(40px, 6vw, 72px); font-weight: 800; line-height: 1; color: var(--gold); }
@@ -527,6 +530,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outl
       <span><b>03</b>독도 탐사 8곳</span>
       <span><b>30분</b>초등 3~6학년</span>
     </div>
+    <div class="t-count" id="playCount" hidden></div>
     <!-- 만든 사람 표시 -->
     <div class="maker"><div class="maker-title"><span>기획·제작</span><b>채쌤</b></div><a class="maker-link" href="https://blog.naver.com/ai_classroom" target="_blank" rel="noopener">AI 수업 아카이브 · 채쌤 블로그 ↗</a></div>
   </div>
@@ -3268,6 +3272,30 @@ cv.addEventListener("pointerup", endPtr); cv.addEventListener("pointercancel", e
 cv.addEventListener("wheel", (e) => { if (S.state !== "explore") return; e.preventDefault(); orbit.tween = null; orbit.r = clamp(orbit.r * (1 + e.deltaY * 0.0012), 45, 720); orbit.idle = 0; }, { passive: false });
 
 $("#startBtn").addEventListener("click", startVoyage);
+/* ---------- 참여자 수 (Cloudflare 서버가 있을 때만, 로그인 없이 기기마다 무작위 번호로 센다) ---------- */
+const Count = (() => {
+  let id = "";
+  try { id = localStorage.getItem("dokdo-device") || ""; } catch (e) {}
+  if (!/^[a-z0-9]{16,40}$/.test(id)) {
+    id = Array.from({ length: 24 }, () => "abcdefghijklmnopqrstuvwxyz0123456789"[Math.floor(Math.random() * 36)]).join("");
+    try { localStorage.setItem("dokdo-device", id); } catch (e) {}
+  }
+  const el = $("#playCount");
+  const show = (d) => {
+    if (!d || typeof d.players !== "number" || d.players < 1) return;
+    el.innerHTML = `지금까지 <b>${d.players.toLocaleString("ko-KR")}</b>명이 독도 원정을 떠났어요`;
+    el.hidden = false;
+  };
+  const ok = typeof fetch === "function" && /^https?:$/.test(location.protocol);
+  if (ok) fetch("/api/stats", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then(show).catch(() => {});
+  let sent = false;
+  return { play() {
+    if (!ok || sent) return; sent = true;
+    fetch("/api/play", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id }) }).then((r) => (r.ok ? r.json() : null)).then(show).catch(() => {});
+  } };
+})();
+$("#startBtn").addEventListener("click", () => Count.play());
+$("#skipBtn").addEventListener("click", () => Count.play());
 $("#qualityBtn").addEventListener("click", () => {
   quality = quality === "auto" ? "low" : quality === "low" ? "high" : "auto";
   try { localStorage.setItem("dokdo-quality", quality); } catch (e) { /* 저장 못 해도 이번 판에는 적용 */ }
