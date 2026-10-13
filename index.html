@@ -265,6 +265,30 @@ input:focus-visible {
 #pauseBtn[hidden] {
   display: none;
 }
+#soundBtn.muted {
+  color: var(--dim);
+  box-shadow: inset 0 0 0 1px var(--line), inset 0 0 0 40px rgba(255, 255, 255, .04);
+}
+.pause-card .btn.home {
+  background: transparent;
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.pause-card .btn.home.confirm {
+  background: #8f2f27;
+  color: #fff;
+  box-shadow: none;
+}
+.p-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 420px) {
+  .p-row {
+    grid-template-columns: 1fr;
+  }
+}
 .pause-card {
   position: relative;
   width: 100%;
@@ -2628,7 +2652,7 @@ input:focus-visible {
 
 <button class="icon-btn" id="soundBtn" type="button" aria-label="소리 끄기" aria-pressed="true">
   <svg id="sndOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
-  <svg id="sndOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+  <svg id="sndOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
 </button>
 <button class="icon-btn" id="pauseBtn" type="button" aria-label="일시정지" hidden>
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
@@ -2984,7 +3008,7 @@ function boot() {
     init() {
       var _a2, _b;
       if (this.ctx) {
-        (_b = (_a2 = this.ctx).resume) == null ? void 0 : _b.call(_a2);
+        if (this.on) (_b = (_a2 = this.ctx).resume) == null ? void 0 : _b.call(_a2);
         return;
       }
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -3254,8 +3278,21 @@ function boot() {
       if (this.oceanGainNode) this.oceanGainNode.gain.setTargetAtTime(on ? 0.34 : 0.2, c.currentTime, 0.4);
     },
     toggle() {
-      this.on = !this.on;
-      if (this.master) this.master.gain.setTargetAtTime(this.on ? 0.9 : 0, this.ctx.currentTime, 0.1);
+      this.set(!this.on);
+    },
+    // 소리 끄기는 볼륨을 0으로 내리고 오디오도 멈춰서, 어떤 기기에서도 확실히 조용해지게 한다
+    set(on) {
+      var _a2, _b, _c, _d;
+      this.on = on;
+      try {
+        localStorage.setItem("dokdo-sound", on ? "1" : "0");
+      } catch (e) {
+      }
+      if (!this.ctx) return;
+      this.master.gain.cancelScheduledValues(this.ctx.currentTime);
+      this.master.gain.setValueAtTime(on && !S.paused ? 0.9 : 0, this.ctx.currentTime);
+      if (on) (_b = (_a2 = this.ctx).resume) == null ? void 0 : _b.call(_a2);
+      else (_d = (_c = this.ctx).suspend) == null ? void 0 : _d.call(_c);
     }
   };
   const stage = $("#stage");
@@ -6555,13 +6592,22 @@ function boot() {
     $("#surfaceBtn").classList.remove("glow");
     exitDive();
   });
-  $("#soundBtn").addEventListener("click", () => {
-    Snd.toggle();
+  function syncSoundBtn() {
     const b = $("#soundBtn");
     b.setAttribute("aria-pressed", String(Snd.on));
     b.setAttribute("aria-label", Snd.on ? "소리 끄기" : "소리 켜기");
-    $("#sndOn").hidden = !Snd.on;
-    $("#sndOff").hidden = Snd.on;
+    b.classList.toggle("muted", !Snd.on);
+    $("#sndOn").style.display = Snd.on ? "" : "none";
+    $("#sndOff").style.display = Snd.on ? "none" : "";
+  }
+  try {
+    if (localStorage.getItem("dokdo-sound") === "0") Snd.on = false;
+  } catch (e) {
+  }
+  syncSoundBtn();
+  $("#soundBtn").addEventListener("click", () => {
+    Snd.toggle();
+    syncSoundBtn();
   });
   addEventListener("resize", () => {
     camera.aspect = innerWidth / innerHeight;
@@ -6586,7 +6632,10 @@ function boot() {
   }
   function setPaused(on) {
     S.paused = on;
-    if (Snd.master) Snd.master.gain.setTargetAtTime(on || !Snd.on ? 0 : 0.9, Snd.ctx.currentTime, 0.1);
+    if (Snd.master) {
+      Snd.master.gain.cancelScheduledValues(Snd.ctx.currentTime);
+      Snd.master.gain.setTargetAtTime(on || !Snd.on ? 0 : 0.9, Snd.ctx.currentTime, 0.1);
+    }
     for (const k in keys) keys[k] = false;
     if (DIVE.keys) for (const k in DIVE.keys) DIVE.keys[k] = 0;
     DIVE.kickHeld = false;
@@ -6597,10 +6646,25 @@ function boot() {
     const got = RECORDS.slice(0, S.collected);
     const seaGot = SEA.filter((r) => S.sea.has(r.id));
     const item = (r, i, label) => '<li><button type="button" data-i="'.concat(i, '"><b>').concat(label, "</b><span>").concat(r.title, "</span></button></li>");
-    pauseMenu.innerHTML = '\n    <article class="pause-card" role="dialog" aria-modal="true" aria-labelledby="pTitle">\n      <div class="kicker">잠깐 멈춤</div>\n      <h2 id="pTitle">일시정지</h2>\n      <button class="btn" id="pResume" type="button">계속하기</button>\n      <h3>모은 유리병 기록 '.concat(got.length, " / ").concat(NREC, "</h3>\n      ").concat(got.length ? '<ul class="p-list" id="pRec">'.concat(got.map((r, i) => item(r, i, String(i + 1).padStart(2, "0"))).join(""), "</ul>") : '<p class="p-empty">아직 건진 유리병이 없어요. 바다에 떠 있는 유리병을 찾아보세요.</p>', "\n      ").concat(seaGot.length ? "<h3>바닷속 관찰 노트 ".concat(seaGot.length, " / ").concat(SEA.length, '</h3><ul class="p-list" id="pSea">').concat(seaGot.map((r, i) => item(r, i, "바다")).join(""), "</ul>") : "", "\n    </article>");
+    pauseMenu.innerHTML = '\n    <article class="pause-card" role="dialog" aria-modal="true" aria-labelledby="pTitle">\n      <div class="kicker">잠깐 멈춤</div>\n      <h2 id="pTitle">일시정지</h2>\n      <div class="p-row"><button class="btn" id="pResume" type="button">계속하기</button><button class="btn home" id="pHome" type="button">처음 화면으로</button></div>\n      <h3>모은 유리병 기록 '.concat(got.length, " / ").concat(NREC, "</h3>\n      ").concat(got.length ? '<ul class="p-list" id="pRec">'.concat(got.map((r, i) => item(r, i, String(i + 1).padStart(2, "0"))).join(""), "</ul>") : '<p class="p-empty">아직 건진 유리병이 없어요. 바다에 떠 있는 유리병을 찾아보세요.</p>', "\n      ").concat(seaGot.length ? "<h3>바닷속 관찰 노트 ".concat(seaGot.length, " / ").concat(SEA.length, '</h3><ul class="p-list" id="pSea">').concat(seaGot.map((r, i) => item(r, i, "바다")).join(""), "</ul>") : "", "\n    </article>");
     pauseMenu.hidden = false;
     pauseBtn.hidden = true;
     $("#pResume").addEventListener("click", closePause);
+    const home = $("#pHome");
+    home.addEventListener("click", () => {
+      if (!home.classList.contains("confirm")) {
+        home.classList.add("confirm");
+        home.textContent = "한 번 더 누르면 처음으로 (기록이 사라져요)";
+        setTimeout(() => {
+          if (home.isConnected) {
+            home.classList.remove("confirm");
+            home.textContent = "처음 화면으로";
+          }
+        }, 4e3);
+        return;
+      }
+      location.reload();
+    });
     $("#pResume").focus({ preventScroll: true });
     const review = (r) => {
       pauseMenu.hidden = true;
